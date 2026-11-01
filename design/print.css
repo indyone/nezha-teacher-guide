@@ -17,6 +17,14 @@
 }
 @page cover{margin:0;
   @top-left{content:"";} @top-right{content:"";} @bottom-left{content:"";} @bottom-right{content:"";}}
+/* Εκτυπώσιμα (Παράρτημα Γ, Δ): αυτόνομα φύλλα· χωρίς κεφαλίδα, χωρίς μπάρα επιπέδου, περιθώρια 15mm,
+   μόνο ένα μικροσκοπικό 7pt υποσέλιδο κάτω δεξιά */
+@page printable{size:A4;margin:15mm;
+  @top-left{content:"";} @top-center{content:"";} @top-right{content:"";}
+  @top-left-corner{content:"";} @top-right-corner{content:"";background:none} @right-middle{content:"";background:none}
+  @bottom-left{content:"";} @bottom-center{content:"";} @bottom-left-corner{content:"";} @bottom-right-corner{content:"";background:none}
+  @bottom-right{content:"Οδηγός Δασκάλου · Nezha Inventor's Kit · " string(prcode);font-family:var(--font-head);font-weight:600;font-size:7pt;color:var(--muted);text-align:right;vertical-align:bottom;padding:0}
+}
 @page landscape{size:A4 landscape;margin:16mm 16mm 16mm 18mm}
 
 html,body{background:#fff}
@@ -198,7 +206,7 @@ li.task{display:flex;align-items:flex-start;gap:2.4mm}
 li.task>.tl{flex:1;min-width:0}
 .cb{flex:none;display:inline-block;width:4mm;height:4mm;border:1pt solid var(--text);border-radius:.8mm;margin-top:.9mm;background:#fff}
 .cb.on{background:var(--text);box-shadow:inset 0 0 0 .8mm #fff}
-.fill{display:inline-block;min-width:45mm;border-bottom:.6pt solid var(--text);height:1em;vertical-align:baseline}
+.fill{display:inline-block;min-width:22mm;border-bottom:.3mm solid var(--text);height:1em;vertical-align:baseline}
 
 /* ---------- Εικόνες, σύνδεσμοι ---------- */
 figure.fig{margin:6mm 0;break-inside:avoid}
@@ -227,9 +235,85 @@ thead{display:table-header-group}
 .table-lessons th,.table-lessons td{padding:1.4mm 2mm}
 .table-lessons tr:nth-child(even) td{background:#F6F8F9}
 
-/* ---------- Εκτυπώσιμα ---------- */
-.printable-page{break-before:page;break-after:page;max-width:none}
-.printable-page>h2{margin-top:0;font-size:20pt}
+/* ---------- Εκτυπώσιμα: αυτόνομα φύλλα στη σελίδα `printable` (περιεχόμενο 180×267mm) ---------- */
+.printable-page,.chapter.printable-chapter{page:printable}
+.printable-page{break-before:page;max-width:none;display:flex;flex-direction:column;min-height:260mm}
+.printable-page>h2{string-set:prcode attr(data-code);margin:0 0 6mm;font-size:20pt;font-weight:800}
+.chapter.printable-chapter>h1{string-set:chapter content(text),lesson " ",prcode attr(data-code);font-size:20pt;margin:0 0 5mm}
+.chapter.printable-chapter{font-size:11pt;line-height:1.45}
+.chapter.printable-chapter>p{max-width:none;margin:0 0 3.4mm}
+.printable-page.bare>h2{height:0;overflow:hidden;margin:0;padding:0;line-height:0}
+.printable-page.bare{min-height:0}
+
+/* ---------- Φόρμες συμπλήρωσης (.form) ---------- */
+.form{display:flex;flex-direction:column;gap:4.5mm;flex:1;margin:0}
+.chapter.printable-chapter>.form{flex:none;gap:3mm;margin:3mm 0}
+.fnote{margin:0;font-size:11.5pt;max-width:none}
+.frow{display:flex;gap:8mm;align-items:flex-end}
+.frow>.ffield{flex:1 1 0;min-width:0}
+.frow>.ffield.inline{flex:none}
+.ffield{display:flex;align-items:flex-end;gap:2.6mm;min-height:9mm}
+.flabel{font-family:var(--font-head);font-weight:600;font-size:11pt;line-height:1.2;white-space:nowrap;padding-bottom:1.6mm}
+.fline{flex:1;min-width:10mm;height:9mm;border-bottom:.3mm solid var(--text)}
+.fval{font-size:11.5pt;padding-bottom:.6mm}
+.fl{display:inline-block;height:6.5mm;border-bottom:.3mm solid var(--text);vertical-align:bottom;margin:0 .6mm}
+.ffield.fboxfield{display:block}
+.ffield.fboxfield>.flabel{display:block;margin-bottom:1.8mm;padding:0;white-space:normal}
+.fbox{border:.3mm solid #8A97A3;border-radius:1.5mm;overflow:hidden;background:#fff}
+.fbox .ln{height:9mm;border-bottom:.3mm solid #B9C2CA}
+.fbox .ln:last-child{border-bottom:0}
+.ffield.fblank{flex:1;display:flex;flex-direction:column;min-height:45mm}
+.fbox.blank{flex:1}
+.fchecks{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:2.5mm}
+.fcheck{display:flex;align-items:center;gap:3.6mm;margin:0;font-size:11.5pt;line-height:1.35;break-inside:avoid}
+.fcheck .cb{width:5mm;height:5mm;border:.4mm solid var(--text);border-radius:.9mm;margin:0;flex:none}
+.fcheck .ftext{flex:1;min-width:0}
+.fcheck .fright{flex:none;margin-left:auto;white-space:nowrap;font-family:var(--font-head);font-weight:600;font-size:10.5pt;color:var(--muted)}
+.fcheck .fright .fl{margin:0 1.5mm 0 1mm}
+
+/* ---------- Αφίσα ασφαλείας (.poster) ---------- */
+.poster{flex:1;display:flex;flex-direction:column;height:262mm}
+.poster-title{font-family:var(--font-head);font-weight:800;font-size:30pt;line-height:1.08;text-align:center;margin:2mm 0 8mm}
+.poster-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,1fr);gap:6mm}
+.ptile{display:flex;align-items:center;gap:5mm;border-radius:4mm;padding:4mm 5mm;background:var(--pb);color:var(--text);break-inside:avoid}
+.ptile .pico{flex:none;width:16mm;height:16mm;color:var(--pa)}
+.ptile .ptext{font-size:13pt;line-height:1.3}
+.ptile .ptext strong{display:block;font-family:var(--font-head);font-weight:800;font-size:14pt;margin-bottom:.8mm}
+.ptile:nth-child(1){--pb:#E3F4EC;--pa:#1F7A52}.ptile:nth-child(2){--pb:#DFF3F3;--pa:#13807F}
+.ptile:nth-child(3){--pb:#E4ECFA;--pa:#2F6FD6}.ptile:nth-child(4){--pb:#ECE4F8;--pa:#7B4FD1}
+.ptile:nth-child(5){--pb:#FDEBDD;--pa:#C45E15}.ptile:nth-child(6){--pb:#FFF7D6;--pa:#9A7400}
+.ptile:nth-child(7){--pb:#FDE7E7;--pa:#D63B3B}.ptile:nth-child(8){--pb:#EEF3F8;--pa:#5B7A99}
+.poster-foot{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:8mm;font-family:var(--font-head);font-weight:800;font-size:16pt;color:var(--text)}
+.poster-foot .pico-s{width:10mm;height:10mm;color:var(--note)}
+
+/* ---------- Κάρτες μισού Α4 (.halfcards): A5 landscape, 2 ανά σελίδα, γραμμή κοπής ---------- */
+.cardsheets{flex:1}
+.cardsheet{display:flex;flex-direction:column;height:261mm;break-after:page;page-break-after:always}
+.cardsheet:last-child{break-after:auto;page-break-after:auto}
+.cutline{position:relative;flex:none;height:7mm;border-bottom:.35mm dashed #8A97A3;margin-bottom:3.5mm;box-sizing:border-box}
+.cutline .cut-ico{position:absolute;left:6mm;top:0;width:6.5mm;height:6.5mm;background:#fff;padding:0 1mm;color:var(--muted);box-sizing:content-box}
+.halfcard{flex:1 1 0;min-height:0;box-sizing:border-box;border:1mm solid var(--cc,var(--muted));border-radius:4mm;padding:6mm 7mm 5mm;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.halfcard.empty{border-color:transparent}
+.hc-head{display:flex;align-items:center;gap:5mm;margin-bottom:4mm}
+.hc-title{font-family:var(--font-head);font-weight:800;font-size:18pt;line-height:1.15;flex:1}
+.halfcard .role-ico{flex:none;width:14mm;height:14mm}
+.hc-body{flex:1;display:flex;flex-direction:column;font-size:12pt;line-height:1.4}
+.hc-body p{margin:0;font-size:12pt}
+.hc-body ul{margin:0 0 4mm;padding-left:5.5mm;font-size:11.5pt;flex:1;display:flex;flex-direction:column;justify-content:space-evenly}
+.hc-body li{margin:0;font-size:11.5pt}
+.hc-body p:last-child{margin-top:auto;padding-top:3mm;border-top:.3mm solid var(--rule)}
+.hc-stars{flex:none;font-family:var(--font-head);font-weight:600;font-size:11pt;color:var(--muted);white-space:nowrap}
+.halfcard.challenge .hc-title{display:flex;align-items:flex-end;gap:2.6mm}
+.halfcard.challenge .hc-title .fline{height:8mm}
+.hc-area{flex:1;min-height:0;font-size:12pt;line-height:1.4;margin:3mm 0}
+.hc-area p{margin:0 0 2.4mm;font-size:12pt}
+.hc-area ul{list-style:none;padding:0;margin:0 0 2mm}
+.hc-area li.task{margin:0 0 1.6mm;font-size:11.5pt}
+.hc-area li.task .cb{width:5mm;height:5mm;border-width:.4mm;margin-top:.4mm}
+.hc-area.ruled{background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.7mm,#8A97A3 8.7mm,#8A97A3 9mm);background-size:100% 9mm}
+.hc-mat{flex:none;border:.3mm solid #8A97A3;border-radius:2mm;padding:2mm 3.4mm;min-height:19mm}
+.hc-mat .flabel{display:block;padding:0;margin-bottom:1mm}
+.hc-mat-body{font-size:11.5pt;line-height:1.35}
 
 /* ---------- Τελικά κεφάλαια (Συντελεστές, Ιστορικό εκδόσεων): χωρίς χρώμα επιπέδου ---------- */
 .chapter.endmatter h2{font-size:13pt;margin:6mm 0 2mm}
@@ -243,3 +327,6 @@ thead{display:table-header-group}
 .variants .vlabel{font-family:var(--font-head);font-weight:800;font-size:11pt;margin-bottom:2mm}
 .variants .humor{margin:0;padding:14mm 4mm 3mm 5mm}
 .variants .humor .ico{left:5mm;top:4mm}
+
+/* δείγμα: σελίδες εκτυπώσιμων χωρίς τίτλο κεφαλαίου */
+.chapter.sheets-only>h1{display:none}
