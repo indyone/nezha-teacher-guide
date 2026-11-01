@@ -14,7 +14,7 @@
 - [Pillow](https://python-pillow.org): επεξεργάζεται τις φωτογραφίες (περικοπή, φωτισμός, ουδέτερο φόντο, αφαίρεση EXIF) και σχεδιάζει τις ετικέτες πάνω στη φωτογραφία της πλακέτας
 - [fontsource](https://fontsource.org): δίνει τις γραμματοσειρές Commissioner, Source Sans 3 και JetBrains Mono
 - [release-please](https://github.com/googleapis/release-please): βγάζει αυτόματα τις εκδόσεις και το «Ιστορικό εκδόσεων» από τα μηνύματα των αλλαγών
-- [git-cliff](https://git-cliff.org): φτιάχνει το «Ιστορικό εκδόσεων» και τοπικά, χωρίς GitHub
+- [git-cliff](https://git-cliff.org): δείχνει τοπικά, χωρίς GitHub, τι θα μπει στο «Ιστορικό εκδόσεων»
 
 ## Πώς φτιάχτηκε αυτός ο οδηγός
 

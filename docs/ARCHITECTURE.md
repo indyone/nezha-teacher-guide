@@ -29,7 +29,7 @@ Pandoc markdown με *fenced divs* (`::: {.timeline}` κ.ά.). Τα αρχεία
 ## 5. Εκδόσεις και CI
 - `.github/workflows/build.yml`: σε push/PR χτίζει `assets → check → html → pdf` και ανεβάζει το `dist/` ως artifact.
 - `.github/workflows/release-please.yml`: ανοίγει Release PR από τα Conventional Commits· στο release χτίζει και επισυνάπτει PDF/HTML στο GitHub Release.
-- `make changelog` (git-cliff, προαιρετικό) παράγει εναλλακτικό changelog από το `cliff.toml`.
+- `make changelog` (git-cliff, προαιρετικό) δείχνει τι θα μπει στην επόμενη έκδοση, χωρίς να γράψει το `CHANGELOG.md`. Στο «Ιστορικό εκδόσεων» μπαίνουν μόνο `feat`/`fix` (και `feat(assets)`)· τα υπόλοιπα types μένουν έξω και στο release-please.
 
 ## Πού είναι τι
 Τοπικό build: `make assets && make html && make pdf`. Αλλαγή εμφάνισης: `design/`. Νέο component: handler στο `tools/build.py` + CSS στο `design/print.css` + περιγραφή στο `COMPONENT_SPEC.md`.
