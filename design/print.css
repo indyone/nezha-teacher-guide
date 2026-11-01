@@ -284,18 +284,19 @@ thead{display:table-header-group}
 .fcheck .fright .fl{margin:0 1.5mm 0 1mm}
 
 /* ---------- Αφίσα ασφαλείας (.poster) ---------- */
-.poster{flex:1;display:flex;flex-direction:column;height:262mm}
-.poster-title{font-family:var(--font-head);font-weight:800;font-size:30pt;line-height:1.08;text-align:center;margin:2mm 0 8mm}
-.poster-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,1fr);gap:6mm}
-.ptile{display:flex;align-items:center;gap:5mm;border-radius:4mm;padding:4mm 5mm;background:var(--pb);color:var(--text);break-inside:avoid}
-.ptile .pico{flex:none;width:16mm;height:16mm;color:var(--pa)}
-.ptile .ptext{font-size:13pt;line-height:1.3}
-.ptile .ptext strong{display:block;font-family:var(--font-head);font-weight:800;font-size:14pt;margin-bottom:.8mm}
+/* σταθερό ύψος (όχι flex:1, που μηδένιζε τη βάση και η αφίσα έβγαινε 227mm): τα πλακίδια γεμίζουν τη σελίδα */
+.poster{flex:none;display:flex;flex-direction:column;height:262mm}
+.poster-title{font-family:var(--font-head);font-weight:800;font-size:30pt;line-height:1.08;text-align:center;margin:0 0 6mm}
+.poster-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,1fr);gap:5mm}
+.ptile{display:flex;align-items:center;gap:4mm;border-radius:4mm;padding:3.5mm 5mm;background:var(--pb);color:var(--text);break-inside:avoid}
+.ptile .pico{flex:none;width:20mm;height:20mm;color:var(--pa)}
+.ptile .ptext{font-size:14pt;line-height:1.3}
+.ptile .ptext strong{display:block;font-family:var(--font-head);font-weight:800;font-size:16pt;margin-bottom:1mm}
 .ptile:nth-child(1){--pb:#E3F4EC;--pa:#1F7A52}.ptile:nth-child(2){--pb:#DFF3F3;--pa:#13807F}
 .ptile:nth-child(3){--pb:#E4ECFA;--pa:#2F6FD6}.ptile:nth-child(4){--pb:#ECE4F8;--pa:#7B4FD1}
 .ptile:nth-child(5){--pb:#FDEBDD;--pa:#C45E15}.ptile:nth-child(6){--pb:#FFF7D6;--pa:#9A7400}
 .ptile:nth-child(7){--pb:#FDE7E7;--pa:#D63B3B}.ptile:nth-child(8){--pb:#EEF3F8;--pa:#5B7A99}
-.poster-foot{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:8mm;font-family:var(--font-head);font-weight:800;font-size:16pt;color:var(--text)}
+.poster-foot{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:5mm;font-family:var(--font-head);font-weight:800;font-size:16pt;color:var(--text)}
 .poster-foot .pico-s{width:10mm;height:10mm;color:var(--note)}
 
 /* ---------- Κάρτες μισού Α4 (.halfcards): A5 landscape, 2 ανά σελίδα, γραμμή κοπής ---------- */
