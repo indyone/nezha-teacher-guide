@@ -251,7 +251,9 @@ thead{display:table-header-group}
 .printable-page{break-before:right;break-after:right;max-width:none;display:flex;flex-direction:column;min-height:260mm}
 .printable-page>h2{margin:0 0 6mm;font-size:20pt;font-weight:800}
 .chapter.printable-chapter{break-before:right;break-after:right}
-.chapter.printable-chapter>h1{string-set:chapter content(text),lesson " ";font-size:20pt;margin:0 0 5mm}
+/* χωρίς δικό του string-set: το Paged.js ξαναβάζει την τελευταία τιμή κάθε επιλογέα, οπότε ένας δεύτερος
+   κανόνας για το chapter κρατούσε «Παράρτημα Δ» στις κεφαλίδες ως το τέλος (το γενικό h1 αρκεί) */
+.chapter.printable-chapter>h1{font-size:20pt;margin:0 0 5mm}
 .chapter.printable-chapter{font-size:11pt;line-height:1.45}
 .chapter.printable-chapter>p{max-width:none;margin:0 0 3.4mm}
 .printable-page.bare>h2{height:0;overflow:hidden;margin:0;padding:0;line-height:0}
