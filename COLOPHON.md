@@ -1,10 +1,4 @@
-**Οδηγός Δασκάλου**\
-Ρομποτική & STEM με το Nezha Inventor's Kit\
-Έκδοση {VERSION} · {DATE}\
-Συγγραφή & επιμέλεια: Ιωάννης Σταυρινός\
-Τελευταία έκδοση και πηγή: [github.com/indyone/nezha-teacher-guide](https://github.com/indyone/nezha-teacher-guide)
-
-### Άδεια χρήσης
+Αυτή είναι η έκδοση {VERSION} ({DATE}). Την τελευταία έκδοση θα τη βρεις στο [github.com/indyone/nezha-teacher-guide](https://github.com/indyone/nezha-teacher-guide).
 
 Το κείμενο και οι φωτογραφίες διατίθενται με την άδεια Creative Commons Αναφορά Δημιουργού – Παρόμοια Διανομή 4.0 Διεθνής (CC BY-SA 4.0).
 
@@ -20,15 +14,15 @@
 
 Πλήρες κείμενο της άδειας: [creativecommons.org/licenses/by-sa/4.0/deed.el](https://creativecommons.org/licenses/by-sa/4.0/deed.el)
 
-### Κώδικας και γραμματοσειρές
+## Κώδικας και γραμματοσειρές
 
 Ο μετατροπέας και το design system διατίθενται με άδεια MIT. Οι γραμματοσειρές Commissioner, Source Sans 3 και JetBrains Mono διατίθενται με άδεια SIL OFL 1.1 και το Paged.js με MIT.
 
-### Εμπορικά σήματα
+## Εμπορικά σήματα
 
 Τα Nezha Inventor's Kit και PlanetX είναι προϊόντα της ELECFREAKS, το micro:bit είναι σήμα του Micro:bit Educational Foundation και το MakeCode ανήκει στη Microsoft. Τα ονόματα χρησιμοποιούνται μόνο περιγραφικά. Ο οδηγός είναι ανεξάρτητος: δεν συνδέεται με αυτές τις εταιρείες και δεν έχει εγκριθεί από αυτές.
 
-### Ασφάλεια και ευθύνη
+## Ασφάλεια και ευθύνη
 
 Οι οδηγίες δοκιμάζονται σε πραγματικά εξαρτήματα. Ακολούθησε τις οδηγίες ασφαλείας του κατασκευαστή και την ενότητα 3.5 «Ασφάλεια». Ο οδηγός διατίθεται «ως έχει», χωρίς εγγύηση, όπως ορίζει και η άδεια CC BY-SA 4.0.
 

@@ -1115,21 +1115,16 @@ GREEK_MONTHS = ["Ιανουάριος", "Φεβρουάριος", "Μάρτιο�
                 "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"]
 
 
-def colophon_html():
-    """COLOPHON.md -> σελίδα ταυτότητας (σελίδα 2, πίσω από το εξώφυλλο): έκδοση, άδεια, σήματα.
-    Τα {VERSION} και {DATE} (μήνας και έτος του build) αντικαθίστανται εδώ· δεν μπαίνει στα Περιεχόμενα."""
-    path = ROOT / "COLOPHON.md"
-    if not path.is_file():
-        return ""
+def build_date():
     today = datetime.date.today()
-    body = "".join(ser(tx(n)) for n in frag(pandoc(path)))
-    body = body.replace("{VERSION}", get_version()).replace("{DATE}", "%s %d" % (GREEK_MONTHS[today.month - 1], today.year))
-    return '<section class="colophon">%s</section>' % body
+    return "%s %d" % (GREEK_MONTHS[today.month - 1], today.year)
 
 
 def md_chapter(path, title):
-    """Ολόκληρο .md του repo (CONTRIBUTORS, CHANGELOG) -> section χωρίς το δικό του h1."""
-    nodes = [tx(n) for n in frag(pandoc(path))]
+    """Ολόκληρο .md του repo (CONTRIBUTORS, COLOPHON, CHANGELOG) -> section χωρίς το δικό του h1.
+    Τα {VERSION} και {DATE} (μήνας και έτος του build) αντικαθίστανται."""
+    html = pandoc(path).replace("{VERSION}", get_version()).replace("{DATE}", build_date())
+    nodes = [tx(n) for n in frag(html)]
     nodes = [n for n in nodes if not (isinstance(n, str) and not n.strip())]
     if nodes and isinstance(nodes[0], El) and nodes[0].tag == "h1":
         nodes = nodes[1:]
@@ -1199,10 +1194,10 @@ def main():
     secs = build_sections(nodes)
     if sample:
         secs = sample_sections(secs)
-    else:  # τελικά κεφάλαια, παράγονται από τα CONTRIBUTORS.md / CHANGELOG.md
+    else:  # τελικά κεφάλαια, παράγονται από τα CONTRIBUTORS.md / COLOPHON.md / CHANGELOG.md
         contrib = md_chapter(ROOT / "CONTRIBUTORS.md", "Συντελεστές & Βιβλιογραφία")
-        contrib["body"].append(R('<p class="licence"><b>Άδεια χρήσης και πληροφορίες έκδοσης:</b> σελίδα 2.</p>'))
-        secs += [contrib, md_chapter(ROOT / "CHANGELOG.md", "Ιστορικό εκδόσεων")]
+        secs += [contrib, md_chapter(ROOT / "COLOPHON.md", "Άδεια χρήσης"),
+                 md_chapter(ROOT / "CHANGELOG.md", "Ιστορικό εκδόσεων")]
     toc, uid, parts = [], [0], []
     sec_html = []
 
@@ -1290,9 +1285,8 @@ def main():
         ".chapter.part{page:part}\n")
 
     tpl = (DESIGN / "template.html").read_text(encoding="utf-8")
-    if sample:  # χωρίς περιεχόμενα και σελίδα ταυτότητας στο δείγμα
+    if sample:  # χωρίς περιεχόμενα στο δείγμα
         tpl = re.sub(r'<section class="toc">.*?</section>\s*', "", tpl, flags=re.S)
-    tpl = tpl.replace("{{COLOPHON}}", "" if sample else colophon_html())
     doc = (tpl.replace("{{TOKENS_CSS}}", tokens).replace("{{PRINT_CSS}}", printcss)
            .replace("{{PAGE_RULES}}", page_rules).replace("{{LEVEL_BAND}}", band)
            .replace("{{VERSION}}", get_version()).replace("{{TOC}}", toc_html).replace("{{BODY}}", "\n".join(sec_html)))
