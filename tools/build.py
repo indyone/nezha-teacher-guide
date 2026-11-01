@@ -1012,7 +1012,7 @@ DEFAULT_LEVEL_NAMES = {
 def pandoc(md_path):
     r = subprocess.run(
         ["pandoc", "-f", "markdown+fenced_divs+task_lists+pipe_tables+smart-auto_identifiers",
-         "-t", "html5", "--wrap=none", str(md_path)],
+         "-t", "html5", "--wrap=preserve", str(md_path)],
         capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit("pandoc απέτυχε στο %s:\n%s" % (md_path, r.stderr))
