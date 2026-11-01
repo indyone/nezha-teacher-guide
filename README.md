@@ -10,7 +10,7 @@
 
 ## Γρήγορη εκκίνηση
 
-Απαιτούνται `git`, `python3` (3.9+), `pandoc` 2.x και, για γραμματοσειρές/PDF, Node 20+.
+Απαιτούνται `git`, `python3` (3.9+), `pandoc` 2.x ή 3.x και, για γραμματοσειρές/PDF, Node 20+.
 
 ```bash
 git clone <url-του-repo> nezha-teacher-guide && cd nezha-teacher-guide

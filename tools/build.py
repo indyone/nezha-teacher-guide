@@ -12,7 +12,7 @@ build.py — Οδηγός Δασκάλου: σημασιολογικό markdown 
     (αν το όρισμα τελειώνει σε .html, γράφεται ακριβώς εκεί το αρχείο)
   * template/css από design/, εικόνες από assets/img/ (στο markdown: img/<όνομα>.jpg)
   * έκδοση: αρχείο VERSION (fallback: τελευταίο git tag)· εμφανίζεται στο εξώφυλλο και στο υποσέλιδο
-Μόνο stdlib + pandoc 2.x.
+Μόνο stdlib + pandoc 2.x ή 3.x.
 """
 import html as htmllib
 import re
