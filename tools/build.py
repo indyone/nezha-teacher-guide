@@ -498,11 +498,17 @@ def img_or_placeholder(src, label, box_cls="box"):
 
 
 def dots(n):
-    try:
-        n = max(0, min(5, int(n)))
-    except (TypeError, ValueError):
-        n = 0
-    return R('<span class="dots">%s</span>' % ("<i class='on'></i>" * n + "<i></i>" * (5 - n)))
+    """Δυσκολία 1–5 σε τελείες· εύρος «3–4» -> δύο ομάδες με παύλα (όπως στον συγκεντρωτικό πίνακα)."""
+    def one(v):
+        try:
+            v = max(0, min(5, int(v)))
+        except (TypeError, ValueError):
+            v = 0
+        return '<span class="dots">%s</span>' % ("<i class='on'></i>" * v + "<i></i>" * (5 - v))
+    parts = re.split(r"\s*[–-]\s*", str(n or "").strip())
+    if len(parts) == 2:
+        return R('<span class="dots-range">%s<span class="dots-sep">–</span>%s</span>' % (one(parts[0]), one(parts[1])))
+    return R(one(n))
 
 
 def h_glance(el):

@@ -124,6 +124,11 @@ figcaption,.caption{font-size:var(--fs-caption);font-style:italic;color:var(--mu
 .dots{display:inline-block;white-space:nowrap;vertical-align:middle}
 .dots i{display:inline-block;width:2.6mm;height:2.6mm;border-radius:50%;border:.5pt solid var(--lv);margin-right:.9mm;background:transparent}
 .dots i.on{background:var(--lv)}
+/* εύρος «3–4»: δύο ομάδες με μικρότερες τελείες ώστε να χωρούν σε ένα κελί της glance card */
+.dots-range{white-space:nowrap}
+.dots-range .dots i{width:2mm;height:2mm;margin-right:.5mm}
+.dots-range .dots i:last-child{margin-right:0}
+.dots-sep{margin:0 .8mm;color:var(--muted)}
 
 /* ---------- Chip ---------- */
 .chip{display:inline-block;font-family:var(--font-mono);font-size:8.5pt;line-height:1;background:var(--chip);color:var(--text);
