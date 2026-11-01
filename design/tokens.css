@@ -73,7 +73,9 @@
 }
 .lv1{--lv:var(--l1);--lv-tint:var(--l1-tint);--on-lv:#22303C} .lv2{--lv:var(--l2);--lv-tint:var(--l2-tint);--on-lv:#22303C}
 .lv3{--lv:var(--l3);--lv-tint:var(--l3-tint);--on-lv:#fff} .lv4{--lv:var(--l4);--lv-tint:var(--l4-tint);--on-lv:#fff}
-.lv5{--lv:var(--l5);--lv-tint:var(--l5-tint);--on-lv:#22303C}
+/* lv5: λευκό κείμενο σε πιο σκούρο πορτοκαλί (--lv-fill, 4.7:1) μόνο εκεί που υπάρχει κείμενο πάνω στο χρώμα·
+   μπάρες και εξώφυλλο κρατούν το --l5 */
+.lv5{--lv:var(--l5);--lv-tint:var(--l5-tint);--on-lv:#fff;--lv-fill:#B85A12}
 
 /* ---------- Page ---------- */
 @page{size:A4;margin:0}
@@ -126,7 +128,7 @@ figcaption,.caption{font-size:var(--fs-caption);font-style:italic;color:var(--mu
 /* ---------- Chip ---------- */
 .chip{display:inline-block;font-family:var(--font-mono);font-size:8.5pt;line-height:1;background:var(--chip);color:var(--text);
   padding:1.1mm 2mm;border-radius:2.4mm;border:.5pt solid var(--rule);white-space:nowrap}
-.chip.level{font-family:var(--font-head);font-weight:800;background:var(--lv);color:var(--on-lv);border-color:var(--lv);letter-spacing:.04em}
+.chip.level{font-family:var(--font-head);font-weight:800;background:var(--lv-fill,var(--lv));color:var(--on-lv);border-color:var(--lv-fill,var(--lv));letter-spacing:.04em}
 
 /* ---------- Glance card ---------- */
 .glance-card{background:var(--lv-tint);border-radius:3mm;padding:4.5mm 5mm 0;margin:0 0 5mm;border-top:1.2mm solid var(--lv)}
@@ -157,14 +159,14 @@ figcaption,.caption{font-size:var(--fs-caption);font-style:italic;color:var(--mu
 .timeline{list-style:none;margin:0 0 4mm;padding:0 0 0 0;position:relative}
 .timeline::before{content:"";position:absolute;left:8.4mm;top:3mm;bottom:3mm;width:.8mm;background:var(--lv);opacity:.35}
 .timeline li{position:relative;padding:0 0 2.4mm 22mm;min-height:7mm;font-size:var(--fs-small);line-height:1.4;page-break-inside:avoid}
-.timeline .min{position:absolute;left:0;top:0;width:17mm;text-align:center;background:var(--lv);color:var(--on-lv);border-radius:3mm;
+.timeline .min{position:absolute;left:0;top:0;width:17mm;text-align:center;background:var(--lv-fill,var(--lv));color:var(--on-lv);border-radius:3mm;
   font-family:var(--font-head);font-weight:800;font-size:8.5pt;padding:1mm 0;line-height:1.1;white-space:nowrap}
 
 /* ---------- Code figure ---------- */
 .code-figure{margin:0 0 3mm;page-break-inside:avoid}
 .code-figure .box{position:relative;width:100%;aspect-ratio:16/9;max-height:100mm;background:#F4F6F8;border:.75pt dashed #AEB8C2;border-radius:2.5mm;overflow:hidden}
 .code-figure .box .ph{position:absolute;left:0;right:0;top:50%;margin-top:-3mm;text-align:center;font-family:var(--font-mono);font-size:8pt;color:var(--muted)}
-.marker{position:absolute;width:5.6mm;height:5.6mm;border-radius:50%;background:var(--lv);color:var(--on-lv);text-align:center;
+.marker{position:absolute;width:5.6mm;height:5.6mm;border-radius:50%;background:var(--lv-fill,var(--lv));color:var(--on-lv);text-align:center;
   font-family:var(--font-head);font-weight:800;font-size:9pt;line-height:5.6mm}
 .marker.inline{position:static;display:inline-block;margin-right:2mm;flex:none}
 
