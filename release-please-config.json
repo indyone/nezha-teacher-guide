@@ -10,14 +10,16 @@
       "changelog-path": "CHANGELOG.md",
       "extra-files": ["VERSION"],
       "changelog-sections": [
-        { "type": "feat", "section": "Περιεχόμενο και λειτουργίες" },
+        { "type": "feat", "section": "Νέα και αλλαγές" },
         { "type": "fix", "section": "Διορθώσεις" },
-        { "type": "docs", "section": "Τεκμηρίωση" },
-        { "type": "build", "section": "Build" },
-        { "type": "chore", "scope": "assets", "section": "Φωτογραφίες και assets" },
-        { "type": "perf", "section": "Επιδόσεις" },
-        { "type": "refactor", "section": "Αναδιάρθρωση" },
-        { "type": "chore", "section": "Συντήρηση", "hidden": true }
+        { "type": "docs", "section": "Τεκμηρίωση", "hidden": true },
+        { "type": "build", "section": "Build", "hidden": true },
+        { "type": "perf", "section": "Επιδόσεις", "hidden": true },
+        { "type": "refactor", "section": "Αναδιάρθρωση", "hidden": true },
+        { "type": "chore", "section": "Συντήρηση", "hidden": true },
+        { "type": "ci", "section": "CI", "hidden": true },
+        { "type": "test", "section": "Έλεγχοι", "hidden": true },
+        { "type": "style", "section": "Μορφοποίηση", "hidden": true }
       ]
     }
   }

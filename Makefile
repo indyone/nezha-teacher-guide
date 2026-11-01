@@ -22,8 +22,8 @@ all: assets html pdf
 clean:
 	rm -rf dist
 
-changelog:         ## git-cliff αν είναι εγκατεστημένο
-	@if command -v git-cliff >/dev/null 2>&1; then git-cliff --config cliff.toml --output CHANGELOG.md; \
+changelog:         ## git-cliff: δείχνει τι θα μπει στην επόμενη έκδοση (δεν γράφει το CHANGELOG.md)
+	@if command -v git-cliff >/dev/null 2>&1; then git-cliff --config cliff.toml --unreleased --strip header; \
 	else echo "Το git-cliff δεν βρέθηκε. Εγκατάσταση: https://git-cliff.org/docs/installation (π.χ. brew install git-cliff)"; fi
 
 version:
