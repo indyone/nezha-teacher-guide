@@ -1,24 +1,26 @@
 #!/bin/sh
-# Επαναδημιουργία όλων των φωτογραφιών από ../photos_raw (εκτός repo).
-# Χρήση: sh tools/process-all.sh [raw-dir]
+# Επαναδημιουργία όλων των φωτογραφιών από φάκελο raw (εκτός repo, π.χ. photos_raw/).
+# Χρήση: sh tools/process-all.sh [raw-dir] [map-file]
+#   raw-dir  default: photos_raw   (gitignored)
+#   map-file default: tools/photo-map.txt  (μορφή: δες την κεφαλίδα του αρχείου)
 set -e
-R=${1:-../photos_raw}; O=assets/img; P="python3 tools/process-photos.py"
-I=$R/IMG_20261031_
-$P "$R/2026-11-01 09.27.43.jpg" $O/usb.jpg --kind component
-$P "$R/2026-11-01 09.27.47.jpg" $O/kit-box.jpg --kind wide
-$P "$R/2026-11-01 09.27.50.jpg" $O/kit-parts.jpg --kind wide
-$P ${I}205233652_HDR.jpg $O/nezha-board-ports.jpg --kind board --box 0.171,0.270,0.809,0.558
-$P ${I}205255174_HDR.jpg $O/microbit-back.jpg
-$P ${I}205308824_HDR.jpg $O/microbit.jpg
-$P ${I}205355823_HDR.jpg $O/led.jpg --rotate 90
-$P ${I}205355823_HDR.jpg $O/led-green.jpg --rotate 90 --region 0,0.15,1,0.39
-$P ${I}205355823_HDR.jpg $O/led-yellow.jpg --rotate 90 --region 0,0.39,1,0.63
-$P ${I}205355823_HDR.jpg $O/led-red.jpg --rotate 90 --region 0,0.64,1,0.88
-$P ${I}205411559_HDR.jpg $O/line.jpg --rotate 90
-$P ${I}205427765_HDR.jpg $O/crash.jpg --rotate 90
-$P ${I}205436936_HDR.jpg $O/trimpot.jpg
-$P ${I}205504079_HDR.jpg $O/soil.jpg --rotate 90
-$P ${I}205514134_HDR.jpg $O/sonar.jpg
-$P ${I}205557964_HDR.jpg $O/motor.jpg
-$P ${I}205609342_HDR.jpg $O/servo.jpg
-$P ${I}205635156_HDR.jpg $O/rj11.jpg
+R=${1:-photos_raw}; M=${2:-tools/photo-map.txt}; O=assets/img
+[ -f "$M" ] || { echo "Λείπει ο χάρτης $M" >&2; exit 1; }
+[ -d "$R" ] || { echo "Λείπει ο φάκελος $R" >&2; exit 1; }
+python3 -I - "$R" "$M" "$O" <<'PY'
+import shlex, subprocess, sys
+R, M, O = sys.argv[1:4]
+n = 0
+for no, line in enumerate(open(M, encoding="utf-8"), 1):
+    line = line.strip()
+    if not line or line.startswith("#"):
+        continue
+    f = shlex.split(line)
+    if len(f) < 3 or f[2] not in ("component", "board", "wide"):
+        sys.exit("%s:%d: αναμένεται <raw> <target> <component|board|wide> [επιλογές]" % (M, no))
+    raw, target, kind, rest = f[0], f[1], f[2], f[3:]
+    subprocess.run(["python3", "tools/process-photos.py", "%s/%s" % (R, raw), "%s/%s.jpg" % (O, target),
+                    "--kind", kind] + rest, check=True)
+    n += 1
+print("Επεξεργάστηκαν %d φωτογραφίες" % n)
+PY

@@ -1,0 +1,25 @@
+# Χάρτης raw -> asset για tools/process-all.sh
+# Μορφή (ένα ανά γραμμή, διαχωρισμός με κενά· όνομα με κενά μέσα σε "εισαγωγικά"):
+#   <raw filename> <target name> <kind> [--rotate N] [--region x0,y0,x1,y1] [--box x0,y0,x1,y1]
+# kind = component | board | wide · target name χωρίς κατάληξη (γράφεται assets/img/<name>.jpg)
+# Το ίδιο raw μπορεί να εμφανίζεται πολλές φορές (π.χ. led -> led-red/yellow/green με --region).
+# Οι γραμμές που αρχίζουν με # και οι κενές αγνοούνται. Η λίστα που ακολουθεί είναι το τρέχον
+# παράδειγμα (raw ονόματα της πρώτης λήψης)· ο συντηρητής την αντικαθιστά με τα δικά του αρχεία.
+"2026-11-01 09.27.43.jpg" usb component
+"2026-11-01 09.27.47.jpg" kit-box wide
+"2026-11-01 09.27.50.jpg" kit-parts wide
+IMG_20261031_205233652_HDR.jpg nezha-board-ports board --box 0.171,0.270,0.809,0.558
+IMG_20261031_205255174_HDR.jpg microbit-back component
+IMG_20261031_205308824_HDR.jpg microbit component
+IMG_20261031_205355823_HDR.jpg led component --rotate 90
+IMG_20261031_205355823_HDR.jpg led-green component --rotate 90 --region 0,0.15,1,0.39
+IMG_20261031_205355823_HDR.jpg led-yellow component --rotate 90 --region 0,0.39,1,0.63
+IMG_20261031_205355823_HDR.jpg led-red component --rotate 90 --region 0,0.64,1,0.88
+IMG_20261031_205411559_HDR.jpg line component --rotate 90
+IMG_20261031_205427765_HDR.jpg crash component --rotate 90
+IMG_20261031_205436936_HDR.jpg trimpot component
+IMG_20261031_205504079_HDR.jpg soil component --rotate 90
+IMG_20261031_205514134_HDR.jpg sonar component
+IMG_20261031_205557964_HDR.jpg motor component
+IMG_20261031_205609342_HDR.jpg servo component
+IMG_20261031_205635156_HDR.jpg rj11 component
