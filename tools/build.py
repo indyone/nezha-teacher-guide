@@ -190,7 +190,8 @@ ICONS = {
     "info": '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>',
     "smile": '<circle cx="12" cy="12" r="9"/><path d="M8 14c1 2.4 7 2.4 8 0M9 9.5v.5M15 9.5v.5"/>',
     "bubble": '<path d="M4 5h16v11H9l-5 4z"/>',
-    "wrench": '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9a4 4 0 0 1-2-2z"/>',
+    "wrench": '<path d="M15.5 3.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5a2.1 2.1 0 0 0 3 3l7.2-7.2a4.5 4.5 0 0 0 5.8-4.3l-2.7 2.7-2.6-.6-.6-2.6z"/>',
+    "brick": '<rect x="3" y="10" width="18" height="9" rx="1.2"/><rect x="6" y="6.5" width="4" height="3.5" rx=".7"/><rect x="14" y="6.5" width="4" height="3.5" rx=".7"/>',
     "pin": '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 4.9-6.5 10.5-6.5 10.5z"/><circle cx="12" cy="10.5" r="2.4"/>',
     "code": '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4.5l-4 15"/>',
     "search": '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21"/>',
@@ -905,6 +906,9 @@ def h_halfcards(el):
         body = [tx(x) for x in k.kids]
         if "rolecard" in k.classes:
             col = ROLE_COLORS.get(k.a("color", ""), "var(--text)")
+            # 1η λίστα = «Τι κάνεις» (✓), 2η = «Τι δεν κάνεις» (✗)
+            for cls, ul in zip(("do", "dont"), [x for x in body if isinstance(x, El) and x.tag == "ul"]):
+                ul.attrs["class"] = (ul.attrs.get("class", "") + " " + cls).strip()
             cards.append(
                 '<div class="halfcard role" style="--cc:%s">'
                 '<div class="hc-head">%s<div class="hc-title">%s</div></div><div class="hc-body">%s</div></div>' % (

@@ -314,10 +314,16 @@ thead{display:table-header-group}
 .hc-head{display:flex;align-items:center;gap:5mm;margin-bottom:4mm}
 .hc-title{font-family:var(--font-head);font-weight:800;font-size:18pt;line-height:1.15;flex:1}
 .halfcard .role-ico{flex:none;width:14mm;height:14mm}
-.hc-body{flex:1;display:flex;flex-direction:column;font-size:12pt;line-height:1.4}
-.hc-body p{margin:0;font-size:12pt}
-.hc-body ul{margin:0 0 4mm;padding-left:5.5mm;font-size:11.5pt;flex:1;display:flex;flex-direction:column;justify-content:space-evenly}
-.hc-body li{margin:0;font-size:11.5pt}
+/* κάρτα ρόλου: «Τι κάνεις» (✓ στο χρώμα του ρόλου) και «Τι δεν κάνεις» (✗), κανονικό διάστιχο, «Πότε αλλάζουμε» κάτω */
+.hc-body{flex:1;display:flex;flex-direction:column;font-size:13pt;line-height:1.4}
+.hc-body p{margin:0;font-size:13pt}
+.hc-body p:not(:last-child){font-family:var(--font-head);font-weight:800;font-size:12pt;color:var(--cc);margin:0 0 2mm}
+.hc-body ul{list-style:none;margin:0 0 5mm;padding:0}
+.hc-body li{position:relative;margin:0 0 1.8mm;padding-left:7.5mm;font-size:13pt;line-height:1.35}
+.hc-body li::before{content:"";position:absolute;left:0;top:.6mm;width:5mm;height:5mm;background:var(--cc);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/contain no-repeat}
+.hc-body ul.dont li::before{background:var(--muted);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M6.5 6.5l11 11M17.5 6.5l-11 11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M6.5 6.5l11 11M17.5 6.5l-11 11'/%3E%3C/svg%3E") center/contain no-repeat}
 .hc-body p:last-child{margin-top:auto;padding-top:3mm;border-top:.3mm solid var(--rule)}
 .hc-stars{flex:none;font-family:var(--font-head);font-weight:600;font-size:11pt;color:var(--muted);white-space:nowrap}
 .halfcard.challenge .hc-title{display:flex;align-items:flex-end;gap:2.6mm}
