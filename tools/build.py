@@ -3,13 +3,15 @@
 """
 build.py — Οδηγός Δασκάλου: σημασιολογικό markdown (pandoc fenced divs) -> ένα HTML έτοιμο για Paged.js.
 
-Χρήση (από τη ρίζα του repo):  python3 tools/build.py [content] [dist]
+Χρήση (από τη ρίζα του repo):  python3 tools/build.py [content] [dist] [--sample]
+  * --sample: γράφεται dist/sample.html (δείγμα 3+ σελίδων για έγκριση: εξώφυλλο, ενότητα 1.1 με
+    καρτέλα εξαρτήματος και Σημείωση, μάθημα 2.1, σελίδα με τις 3 εκδοχές εικονιδίου «Για γέλια»)
   * 1ο όρισμα: φάκελος με τα .md (default content/)
   * 2ο όρισμα: φάκελος εξόδου (default dist/)· γράφεται dist/index.html και
     αντιγράφονται τα assets/img -> dist/img και assets/vendor -> dist/assets/vendor
     (αν το όρισμα τελειώνει σε .html, γράφεται ακριβώς εκεί το αρχείο)
   * template/css από design/, εικόνες από assets/img/ (στο markdown: img/<όνομα>.jpg)
-  * έκδοση: αρχείο VERSION, με προτεραιότητα στο `git describe --tags --always`
+  * έκδοση: αρχείο VERSION (fallback: τελευταίο git tag)· εμφανίζεται στο εξώφυλλο και στο υποσέλιδο
 Μόνο stdlib + pandoc 2.x.
 """
 import html as htmllib
@@ -34,18 +36,23 @@ def img_exists(src):
 
 
 def get_version():
-    """git describe --tags --always αν υπάρχει, αλλιώς το αρχείο VERSION."""
+    """Έκδοση για εμφάνιση (χωρίς το πρόθεμα v): αρχείο VERSION (το συντηρεί το release-please)·
+    αν λείπει, το πιο πρόσφατο tag του git."""
     try:
-        v = subprocess.run(["git", "describe", "--tags", "--always"], cwd=ROOT, capture_output=True,
-                           text=True, timeout=10)
-        if v.returncode == 0 and v.stdout.strip():
-            return v.stdout.strip()
-    except (OSError, subprocess.SubprocessError):
+        v = (ROOT / "VERSION").read_text(encoding="utf-8").strip().lstrip("v")
+        if v:
+            return v
+    except OSError:
         pass
     try:
-        return (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-    except OSError:
-        return "dev"
+        r = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], cwd=ROOT, capture_output=True,
+                           text=True, timeout=10)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip().lstrip("v")
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return "dev"
+
 
 # ----------------------------------------------------------------------------
 # Μίνι DOM (stdlib μόνο)
@@ -184,17 +191,10 @@ ICONS = {
     "smile": '<circle cx="12" cy="12" r="9"/><path d="M8 14c1 2.4 7 2.4 8 0M9 9.5v.5M15 9.5v.5"/>',
     "bubble": '<path d="M4 5h16v11H9l-5 4z"/>',
     "wrench": '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9a4 4 0 0 1-2-2z"/>',
+    "pin": '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 4.9-6.5 10.5-6.5 10.5z"/><circle cx="12" cy="10.5" r="2.4"/>',
     "scissors": '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/>',
 }
 
-
-def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
-    return R(
-        '<svg class="%s" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="%s" '
-    "pin": '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 4.9-6.5 10.5-6.5 10.5z"/><circle cx="12" cy="10.5" r="2.4"/>',
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>'
-        % (cls, stroke, sw, ICONS[name])
-    )
 
 # Εικονίδια «Για γέλια» (3 εκδοχές, line-art 24x24, stroke currentColor)
 HUMOR_ICONS = {
@@ -218,6 +218,13 @@ def humor_icons():
         'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>' % (k, v)
         for k, v in HUMOR_ICONS.items()))
 
+
+def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
+    return R(
+        '<svg class="%s" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="%s" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>'
+        % (cls, stroke, sw, ICONS[name])
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -566,13 +573,6 @@ def h_timeline(el):
     return out
 
 
-def h_codefig(el):
-    src, cap, link = el.a("src"), el.a("caption", ""), el.a("link")
-    fid = el.attrs.get("id", "")
-    m = re.match(r"^fig-(.+)$", fid)
-    if m:
-        num = m.group(1).replace("-", ".")
-    else:
 def linkbox(title, url):
     """Λεπτή λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 16mm δεξιά."""
     qr = qr_svg(url)
@@ -583,11 +583,20 @@ def linkbox(title, url):
              '<a href="%s">%s</a></div>%s</div>' % (esc(title), esc(url), esc(short), ser(qr) if qr is not None else ""))
 
 
+def h_codefig(el):
+    src, cap, link = el.a("src"), el.a("caption", ""), el.a("link")
+    fid = el.attrs.get("id", "")
+    m = re.match(r"^fig-(.+)$", fid)
+    if m:
+        num = m.group(1).replace("-", ".")
+    else:
         STATS["fig_counter"] += 1
         num = str(STATS["fig_counter"])
     fig = mk("figure", "code-figure", **({"id": fid} if fid else {}))
     fig.kids.append(img_or_placeholder(src, cap or "Κώδικας"))
     fig.kids.append(R("<figcaption><b>Εικόνα %s</b> – %s</figcaption>" % (esc(num), esc(cap))))
+    if link:
+        fig.kids.append(linkbox("Άνοιξε τον κώδικα", link))
     return fig
 
 
@@ -595,8 +604,6 @@ def h_steps(el):
     ol = next((k for k in el.kids if isinstance(k, El) and k.tag in ("ol", "ul")), None)
     out = mk("ol", "steps")
     if ol is None:
-    if link:
-        fig.kids.append(linkbox("Άνοιξε τον κώδικα", link))
         return el
     i = 0
     for li in [k for k in ol.kids if isinstance(k, El) and k.tag == "li"]:
@@ -643,6 +650,10 @@ def make_callout(kind):
 
 
 def h_aside(el):
+    """Πλαίσιο «Σημείωση» μέσα στη ροή."""
+    label = "ΣΗΜΕΙΩΣΗ"
+    if el.attrs.get("title"):
+        label += " · " + el.attrs["title"]
     c = mk("div", "aside")
     c.kids.append(icon("pin", "ico", "currentColor"))
     c.kids.append(R('<span class="label">%s</span>' % esc(label)))
@@ -650,10 +661,6 @@ def h_aside(el):
     return c
 
 
-    """Πλαίσιο «Σημείωση» μέσα στη ροή."""
-    label = "ΣΗΜΕΙΩΣΗ"
-    if el.attrs.get("title"):
-        label += " · " + el.attrs["title"]
 def h_humor(el):
     """Πλαίσιο «Για γέλια»· εκδοχή εικονιδίου με attribute v="1|2|3" (default 1)."""
     v = el.a("v", "1")
@@ -873,9 +880,46 @@ def wrap_printables(body):
     return out
 
 
+def md_chapter(path, title):
+    """Ολόκληρο .md του repo (CONTRIBUTORS, CHANGELOG) -> section χωρίς το δικό του h1."""
+    nodes = [tx(n) for n in frag(pandoc(path))]
+    nodes = [n for n in nodes if not (isinstance(n, str) and not n.strip())]
+    if nodes and isinstance(nodes[0], El) and nodes[0].tag == "h1":
+        nodes = nodes[1:]
+    return {"h1": El("h1", {}, [title]), "body": nodes, "endmatter": True}
+
+
+def sample_sections(secs):
+    """Δείγμα: Μέρος 1 (ενότητα 1.1 + 1 καρτέλα εξαρτήματος + 1 Σημείωση), μάθημα 2.1, σελίδα εικονιδίων."""
+    def title(sec):
+        return text_of(sec["h1"]).strip() if sec["h1"] is not None else ""
+    part1 = next(sc for sc in secs if title(sc).startswith("Μέρος 1"))
+    body, take = [], False
+    for n in part1["body"]:
+        if isinstance(n, El) and n.tag == "h2":
+            take = text_of(n).strip().startswith("1.1")
+        if take:
+            body.append(n)
+    comp = next(n for b in part1["body"] for n in walk(b) if isinstance(n, El) and "component-card" in n.classes)
+    note = next(n for b in part1["body"] for n in walk(b) if isinstance(n, El) and "aside" in n.classes)
+    body += [comp, note]
+    lesson = next(sc for sc in secs if title(sc).startswith("Μάθημα 2.1"))
+    variants = "".join(
+        '<div><div class="vlabel">Εκδοχή %d</div>%s</div>' % (i, ser(h_humor(El("div", {"v": str(i)}, [
+            R("<p>Το κίτρινο κρατά 2 δευτερόλεπτα. Ρώτα την τάξη ποιος αποφάσισε ότι αρκούν.</p>")]))))
+        for i in (1, 2, 3))
+    vsec = {"h1": El("h1", {}, ["Εικονίδια «Για γέλια» (μόνο στο δείγμα)"]), "sample_only": True, "body": [
+        R("<p>Τρεις εκδοχές εικονιδίου για το πλαίσιο «Για γέλια». Η προεπιλογή είναι η Εκδοχή 1· "
+          "αλλάζει με την κλάση <code>v1</code>, <code>v2</code> ή <code>v3</code>.</p>"),
+        R('<div class="variants">%s</div>' % variants)]}
+    return [{"h1": part1["h1"], "body": body}, lesson, vsec]
+
+
 def main():
-    src_arg = sys.argv[1] if len(sys.argv) > 1 else "content"
-    out_arg = sys.argv[2] if len(sys.argv) > 2 else "dist"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    sample = "--sample" in sys.argv[1:]
+    src_arg = args[0] if len(args) > 0 else "content"
+    out_arg = args[1] if len(args) > 1 else "dist"
     src = None
     for cand in (Path(src_arg), ROOT / src_arg):
         if cand.is_dir():
@@ -887,7 +931,7 @@ def main():
     if out_arg_p.suffix.lower() == ".html":
         out_path, out_dir = out_arg_p, out_arg_p.parent
     else:
-        out_dir, out_path = out_arg_p, out_arg_p / "index.html"
+        out_dir, out_path = out_arg_p, out_arg_p / ("sample.html" if sample else "index.html")
     out_dir.mkdir(parents=True, exist_ok=True)
     files = sorted(src.glob("[0-9]*.md"), key=lambda p: p.name)  # STYLE_BRIEF.md etc. δεν είναι κεφάλαια
     if not files:
@@ -900,6 +944,14 @@ def main():
 
     # sections ανά h1
     secs = build_sections(nodes)
+    if sample:
+        secs = sample_sections(secs)
+    else:  # τελικά κεφάλαια, παράγονται από τα CONTRIBUTORS.md / CHANGELOG.md
+        contrib = md_chapter(ROOT / "CONTRIBUTORS.md", "Συντελεστές & Βιβλιογραφία")
+        contrib["body"].append(R('<p class="licence"><b>Άδειες:</b> περιεχόμενο και φωτογραφίες '
+                                 '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.el">CC BY-SA 4.0</a> · '
+                                 'κώδικας και design (tools/, design/) MIT.</p>'))
+        secs += [contrib, md_chapter(ROOT / "CHANGELOG.md", "Ιστορικό εκδόσεων")]
     toc, uid, parts = [], [0], []
     sec_html = []
 
@@ -925,6 +977,10 @@ def main():
             if m:
                 LEVEL_NAMES[lvl] = m.group(1).strip()
         sc = ["chapter", kind]
+        if s.get("endmatter"):
+            sc.append("endmatter")
+        if s.get("sample_only"):
+            sc.append("sample-only")
         if kind in ("lesson", "level-intro") and lvl:
             sc.append("lv" + lvl)
             h1.attrs["class"] = " ".join(sorted(classes))
@@ -937,7 +993,7 @@ def main():
         for b in body:
             if isinstance(b, El) and b.tag == "h2":
                 hid2 = ensure_id(b)
-                if kind != "lesson":
+                if kind != "lesson" and not s.get("endmatter"):
                     toc.append((2, hid2, text_of(b).strip(), None, kind))
         if link_appx:
             for b in body:
@@ -985,6 +1041,8 @@ def main():
         ".chapter.part{page:part}\n")
 
     tpl = (DESIGN / "template.html").read_text(encoding="utf-8")
+    if sample:  # χωρίς περιεχόμενα στο δείγμα
+        tpl = re.sub(r'<section class="toc">.*?</section>\s*', "", tpl, flags=re.S)
     doc = (tpl.replace("{{TOKENS_CSS}}", tokens).replace("{{PRINT_CSS}}", printcss)
            .replace("{{PAGE_RULES}}", page_rules).replace("{{LEVEL_BAND}}", band)
            .replace("{{VERSION}}", get_version()).replace("{{TOC}}", toc_html).replace("{{BODY}}", "\n".join(sec_html)))
