@@ -3,13 +3,15 @@
 """
 build.py — Οδηγός Δασκάλου: σημασιολογικό markdown (pandoc fenced divs) -> ένα HTML έτοιμο για Paged.js.
 
-Χρήση (από τη ρίζα του repo):  python3 tools/build.py [content] [dist]
+Χρήση (από τη ρίζα του repo):  python3 tools/build.py [content] [dist] [--sample]
+  * --sample: γράφεται dist/sample.html (δείγμα 3+ σελίδων για έγκριση: εξώφυλλο, ενότητα 1.1 με
+    καρτέλα εξαρτήματος και Σημείωση, μάθημα 2.1, εκτυπώσιμα δείγματα)
   * 1ο όρισμα: φάκελος με τα .md (default content/)
   * 2ο όρισμα: φάκελος εξόδου (default dist/)· γράφεται dist/index.html και
     αντιγράφονται τα assets/img -> dist/img και assets/vendor -> dist/assets/vendor
     (αν το όρισμα τελειώνει σε .html, γράφεται ακριβώς εκεί το αρχείο)
   * template/css από design/, εικόνες από assets/img/ (στο markdown: img/<όνομα>.jpg)
-  * έκδοση: αρχείο VERSION, με προτεραιότητα στο `git describe --tags --always`
+  * έκδοση: αρχείο VERSION (fallback: τελευταίο git tag)· εμφανίζεται στο εξώφυλλο και στο υποσέλιδο
 Μόνο stdlib + pandoc 2.x.
 """
 import html as htmllib
@@ -34,18 +36,23 @@ def img_exists(src):
 
 
 def get_version():
-    """git describe --tags --always αν υπάρχει, αλλιώς το αρχείο VERSION."""
+    """Έκδοση για εμφάνιση (χωρίς το πρόθεμα v): αρχείο VERSION (το συντηρεί το release-please)·
+    αν λείπει, το πιο πρόσφατο tag του git."""
     try:
-        v = subprocess.run(["git", "describe", "--tags", "--always"], cwd=ROOT, capture_output=True,
-                           text=True, timeout=10)
-        if v.returncode == 0 and v.stdout.strip():
-            return v.stdout.strip()
-    except (OSError, subprocess.SubprocessError):
+        v = (ROOT / "VERSION").read_text(encoding="utf-8").strip().lstrip("v")
+        if v:
+            return v
+    except OSError:
         pass
     try:
-        return (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-    except OSError:
-        return "dev"
+        r = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], cwd=ROOT, capture_output=True,
+                           text=True, timeout=10)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip().lstrip("v")
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return "dev"
+
 
 # ----------------------------------------------------------------------------
 # Μίνι DOM (stdlib μόνο)
@@ -184,8 +191,43 @@ ICONS = {
     "smile": '<circle cx="12" cy="12" r="9"/><path d="M8 14c1 2.4 7 2.4 8 0M9 9.5v.5M15 9.5v.5"/>',
     "bubble": '<path d="M4 5h16v11H9l-5 4z"/>',
     "wrench": '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9a4 4 0 0 1-2-2z"/>',
+    "pin": '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 4.9-6.5 10.5-6.5 10.5z"/><circle cx="12" cy="10.5" r="2.4"/>',
+    "code": '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4.5l-4 15"/>',
+    "search": '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21"/>',
+    # εικονίδια αφίσας ασφαλείας
+    "battery": '<rect x="2" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3M6 10v4M10 10v4"/>',
+    "stop": '<path d="M7.5 12.5V6a1.5 1.5 0 0 1 3 0v5M10.5 11V4.5a1.5 1.5 0 0 1 3 0V11M13.5 11V5.5a1.5 1.5 0 0 1 3 0v8.5M7.5 12.5l-1.4-2a1.5 1.5 0 0 0-2.4 1.7l3.3 6.3c1.3 2.3 3 3.5 5.9 3.5 3.5 0 5.6-2.4 5.6-6V12"/>',
+    "drop": '<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/><path d="M4 4l16 16"/>',
+    "gear": '<circle cx="9.5" cy="9.5" r="3"/><circle cx="9.5" cy="9.5" r="5.2"/><path d="M9.5 2v2M9.5 15v2M2 9.5h2M15 9.5h2M4.2 4.2l1.4 1.4M13.4 13.4l1.4 1.4M4.2 14.8l1.4-1.4M13.4 5.6l1.4-1.4"/><path d="M15 22.5v-5a1.3 1.3 0 0 1 2.6 0v-.8a1.3 1.3 0 0 1 2.6 0v.8a1.3 1.3 0 0 1 2.3 1v3"/>',
+    "plug": '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
+    "car": '<path d="M3 16v-4l2-5h14l2 5v4zM3 12h18"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+    "port": '<rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M8 11v2M12 11v2M16 11v2M8 7V5M12 7V5M16 7V5M8 17v2M12 17v2M16 17v2"/><path d="M2 22L22 2" />',
+    "teacher": '<circle cx="12" cy="7" r="3.4"/><path d="M5 21c0-4.2 3-7 7-7s7 2.8 7 7M9.5 14.5L12 18l2.5-3.5"/>',
     "scissors": '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/>',
 }
+
+
+# Εικονίδια «Bug ή feature;» (3 εκδοχές, line-art 24x24, stroke currentColor)
+HUMOR_ICONS = {
+    # v1: πρόσωπο που γελά, κλειστά μάτια, ανοιχτό στόμα
+    "v1": '<circle cx="12" cy="12" r="9.5"/><path d="M6.8 10.2q1.7-2.4 3.4 0M13.8 10.2q1.7-2.4 3.4 0"/>'
+          '<path d="M6.6 13.6h10.8c0 3.4-2.4 5.6-5.4 5.6s-5.4-2.2-5.4-5.6z"/><path d="M9.6 17.4q2.4-1.6 4.8 0"/>',
+    # v2: μύτη κλόουν + καπέλο πάρτι
+    "v2": '<path d="M12 1.8l-3.6 6.6h7.2z"/><circle cx="12" cy="1.8" r=".7"/><circle cx="12" cy="15" r="7.2"/>'
+          '<path d="M9.2 12.6v.4M14.8 12.6v.4"/><circle cx="12" cy="15.2" r="1.6"/><path d="M8.6 18.2q3.4 2.6 6.8 0"/>',
+    # v3: φούσκα ομιλίας με «ha!» και χαμόγελο
+    "v3": '<path d="M3 3.5h18v13H10.5L6 21v-4.5H3z"/><path d="M9.2 12.8q2.8 2 5.6 0"/>'
+          '<text x="12" y="10.2" text-anchor="middle" font-size="6.2" font-weight="800" fill="currentColor" '
+          'stroke="none" font-family="Commissioner,Lato,Arial,sans-serif">ha!</text>',
+}
+
+
+def humor_icons():
+    """και οι τρεις εκδοχές inline· το CSS (.humor.v1/.v2/.v3) δείχνει μόνο μία."""
+    return R("".join(
+        '<svg class="ico ico-%s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>' % (k, v)
+        for k, v in HUMOR_ICONS.items()))
 
 
 def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
@@ -197,7 +239,7 @@ def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
 
 
 # ----------------------------------------------------------------------------
-# Ελάχιστος κωδικοποιητής QR (byte mode, EC level L, εκδόσεις 1–10, ≤271 bytes)
+# Ελάχιστος κωδικοποιητής QR (byte mode, EC level L, εκδόσεις 1–14, ≤458 bytes)
 # ----------------------------------------------------------------------------
 # έκδοση: (σύνολο data cw, ec cw ανά block, [(πλήθος blocks, data cw ανά block), ...])
 _QR_L = {
@@ -205,9 +247,12 @@ _QR_L = {
     4: (80, 20, [(1, 80)]), 5: (108, 26, [(1, 108)]), 6: (136, 18, [(2, 68)]),
     7: (156, 20, [(2, 78)]), 8: (194, 24, [(2, 97)]), 9: (232, 30, [(2, 116)]),
     10: (274, 18, [(2, 68), (2, 69)]),
+    11: (324, 20, [(4, 81)]), 12: (370, 24, [(2, 92), (2, 93)]), 13: (428, 26, [(4, 107)]),
+    14: (461, 30, [(3, 115), (1, 116)]),
 }
 _QR_ALIGN = {1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34],
-             7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50]}
+             7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50],
+             11: [6, 30, 54], 12: [6, 32, 58], 13: [6, 34, 62], 14: [6, 26, 46, 66]}
 
 
 def _gf_mul(x, y):
@@ -243,7 +288,7 @@ def _rs_rem(data, gen):
 def qr_matrix(text):
     data = text.encode("utf-8")
     ver = None
-    for v in range(1, 11):
+    for v in range(1, 15):
         cap = _QR_L[v][0] - (2 if v < 10 else 3)
         if len(data) <= cap:
             ver = v
@@ -406,16 +451,28 @@ def qr_matrix(text):
     return best[2]
 
 
-def qr_svg(url, cls="qr"):
+QR_MIN_MM_PER_MODULE = 0.55   # κάτω όριο αναγνωσιμότητας (mm ανά module)
+QR_QUIET = 4                  # quiet zone: 4 modules
+QR_LOG = []                   # (url, modules, mm_box, mm_per_module) για τον αυτοέλεγχο
+
+
+def qr_svg(url, cls="qr", mm=22):
+    """QR καθαρό μαύρο σε λευκό, quiet zone 4 modules. Το `mm` είναι το πλάτος του κουτιού (με quiet zone)·
+    αν δίνει < 0.55 mm/module (μεγάλα URL), το κουτί μεγαλώνει ώστε να μείνει σαρώσιμο."""
     m = qr_matrix(url)
     if m is None:
         return None
-    n, q = len(m), 2
+    n = len(m)
+    q = QR_QUIET
+    side = n + 2 * q
+    box = max(float(mm), QR_MIN_MM_PER_MODULE * side)
     d = "".join("M%d %dh1v1h-1z" % (x + q, y + q) for y in range(n) for x in range(n) if m[y][x])
+    QR_LOG.append((url, n, box, box / side))
     return R(
-        '<svg class="%s" viewBox="0 0 %d %d" shape-rendering="crispEdges" role="img" '
-        'aria-label="QR: %s"><rect width="100%%" height="100%%" fill="#fff"/><path d="%s" fill="#22303C"/></svg>'
-        % (cls, n + 2 * q, n + 2 * q, esc(url), d)
+        '<svg class="%s" viewBox="0 0 %d %d" width="%.2fmm" height="%.2fmm" style="width:%.2fmm;height:%.2fmm" '
+        'shape-rendering="crispEdges" role="img" aria-label="QR: %s"><rect width="%d" height="%d" fill="#fff"/>'
+        '<path d="%s" fill="#000"/></svg>'
+        % (cls, side, side, box, box, box, box, esc(url), side, side, d)
     )
 
 
@@ -542,6 +599,16 @@ def h_timeline(el):
     return out
 
 
+def linkbox(title, url):
+    """Λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 22mm δεξιά."""
+    qr = qr_svg(url, "qr", 22)
+    if qr is None:
+        STATS["qr_fallback"] += 1
+    short = re.sub(r"^https?://", "", url)
+    return R('<div class="linkbox"><div class="lb-text"><span class="lb-title">%s</span>'
+             '<a href="%s">%s</a></div>%s</div>' % (esc(title), esc(url), esc(short), ser(qr) if qr is not None else ""))
+
+
 def h_codefig(el):
     src, cap, link = el.a("src"), el.a("caption", ""), el.a("link")
     fid = el.attrs.get("id", "")
@@ -552,22 +619,10 @@ def h_codefig(el):
         STATS["fig_counter"] += 1
         num = str(STATS["fig_counter"])
     fig = mk("figure", "code-figure", **({"id": fid} if fid else {}))
-    row = mk("div", "cf-row")
-    main = mk("div", "cf-main")
-    main.kids.append(img_or_placeholder(src, cap or "Κώδικας"))
-    row.kids.append(main)
-    if link:
-        qr = qr_svg(link)
-        side = mk("div", "cf-link")
-        if qr is not None:
-            side.kids.append(qr)
-            side.kids.append(R('<a href="%s">Άνοιξε τον κώδικα</a>' % esc(link)))
-        else:
-            STATS["qr_fallback"] += 1
-            side.kids.append(R('<a href="%s">Άνοιξε τον κώδικα</a><span class="url">%s</span>' % (esc(link), esc(link))))
-        row.kids.append(side)
-    fig.kids.append(row)
+    fig.kids.append(img_or_placeholder(src, cap or "Κώδικας"))
     fig.kids.append(R("<figcaption><b>Εικόνα %s</b> – %s</figcaption>" % (esc(num), esc(cap))))
+    if link:
+        fig.kids.append(linkbox("Άνοιξε τον κώδικα", link))
     return fig
 
 
@@ -621,17 +676,24 @@ def make_callout(kind):
 
 
 def h_aside(el):
+    """Πλαίσιο «Σημείωση» μέσα στη ροή."""
+    label = "ΣΗΜΕΙΩΣΗ"
+    if el.attrs.get("title"):
+        label += " · " + el.attrs["title"]
     c = mk("div", "aside")
-    c.kids.append(icon("info"))
-    c.kids.append(R('<span class="label">%s</span>' % esc(el.attrs.get("title") or "Στο περιθώριο")))
+    c.kids.append(icon("pin", "ico", "currentColor"))
+    c.kids.append(R('<span class="label">%s</span>' % esc(label)))
     c.kids += el.kids
     return c
 
 
 def h_humor(el):
-    c = mk("div", "aside humor")
-    c.kids.append(icon("smile"))
-    c.kids.append(R('<span class="label">%s</span>' % esc(el.attrs.get("title") or "Μικρή παρατήρηση")))
+    """Πλαίσιο «Bug ή feature;»· εκδοχή εικονιδίου με attribute v="1|2|3" (default 1)."""
+    v = el.a("v", "1")
+    v = v if v in ("1", "2", "3") else "1"
+    c = mk("div", "humor v" + v)
+    c.kids.append(humor_icons())
+    c.kids.append(R('<span class="label">BUG Ή FEATURE;</span>'))
     c.kids += el.kids
     return c
 
@@ -674,13 +736,7 @@ def h_build(el):
     head = '<div class="bh">%s<span class="label">Σημειώσεις κατασκευής</span></div>' % ser(icon("wrench"))
     out.kids.append(R(head))
     if url:
-        qr = qr_svg(url, "qr qr-s")
-        short = re.sub(r"^https?://", "", url)
-        body = '<div class="b-link"><div><a href="%s">Οδηγίες βήμα-βήμα στο wiki</a><span class="url">%s</span></div>%s</div>' % (
-            esc(url), esc(short), ser(qr) if qr is not None else "")
-        if qr is None:
-            STATS["qr_fallback"] += 1
-        out.kids.append(R(body))
+        out.kids.append(linkbox("Οδηγίες κατασκευής", url))
     out.kids += el.kids
     return out
 
@@ -744,6 +800,145 @@ def h_figure(el):
     return f
 
 
+# ----------------------------------------------------------------------------
+# Φόρμες συμπλήρωσης (.form), αφίσα (.poster), κάρτες μισού Α4 (.halfcards)
+# ----------------------------------------------------------------------------
+def fill_inline(html):
+    """___ μέσα σε κείμενο -> μικρή γραμμή γραφής (πλάτος ανάλογο με τα underscores)."""
+    return re.sub(r"_{3,}", lambda m: '<i class="fl" style="width:%dmm"></i>' % max(8, min(60, len(m.group(0)) * 2.4)), html)
+
+
+FORM_LABEL_RE = re.compile(r"^(.*?):\s*(.*)$", re.S)
+CHECK_RE = re.compile(r'^<input[^>]*type="checkbox"[^>]*>\s*(.*)$', re.S)
+
+
+def form_field(seg):
+    m = FORM_LABEL_RE.match(seg.strip())
+    if not m:
+        return '<div class="ffield"><span class="flabel">%s</span></div>' % seg
+    label, val = m.group(1).strip(), m.group(2).strip()
+    if re.fullmatch(r"_{3,}", val):
+        return '<div class="ffield"><span class="flabel">%s</span><span class="fline"></span></div>' % label
+    if re.fullmatch(r"={3,}", val):  # πλαίσιο με γραμμές: 3 '=' -> 3 γραμμές, 4 -> 4, ...
+        n = len(val)
+        return ('<div class="ffield fboxfield"><span class="flabel">%s</span><div class="fbox">%s</div></div>'
+                % (label, '<div class="ln"></div>' * n))
+    if val == "[box]":  # κενό πλαίσιο σχεδίου (παίρνει τον υπόλοιπο χώρο της σελίδας)
+        return '<div class="ffield fboxfield fblank"><span class="flabel">%s</span><div class="fbox blank"></div></div>' % label
+    return '<div class="ffield inline"><span class="flabel">%s</span><span class="fval">%s</span></div>' % (label, fill_inline(val))
+
+
+def form_check(body):
+    parts = re.split(r"\s+—\s+", body, maxsplit=1)
+    if len(parts) == 2 and "___" in parts[1]:
+        return ('<li class="fcheck"><span class="cb"></span><span class="ftext">%s</span>'
+                '<span class="fright">%s</span></li>' % (parts[0], fill_inline(parts[1])))
+    return '<li class="fcheck"><span class="cb"></span><span class="ftext">%s</span></li>' % fill_inline(body)
+
+
+def h_form(el):
+    """::: {.form} — `- Label: ___` γραμμή, `- Label: ===` πλαίσιο 3 γραμμών (`====` 4, …), `- Label: [box]`
+    κενό πλαίσιο, `A: ___ | B: ___` δύο πεδία στην ίδια σειρά, `- [ ] κείμενο` checklist, παράγραφος = σημείωση."""
+    out = []
+    for k in el.kids:
+        if isinstance(k, El) and k.tag == "p":
+            out.append('<p class="fnote">%s</p>' % fill_inline(flat(k)))
+        elif isinstance(k, El) and k.tag in ("ul", "ol"):
+            checks = []
+
+            def flush():
+                if checks:
+                    out.append('<ul class="fchecks">%s</ul>' % "".join(checks))
+                    checks.clear()
+            for li in [x for x in k.kids if isinstance(x, El) and x.tag == "li"]:
+                body = flat(li)
+                m = CHECK_RE.match(body)
+                if m:
+                    checks.append(form_check(m.group(1)))
+                    continue
+                flush()
+                segs = re.split(r"\s\|\s", body)
+                out.append('<div class="frow">%s</div>' % "".join(form_field(x) for x in segs))
+            flush()
+    return R('<div class="form">%s</div>' % "".join(out))
+
+
+def h_poster(el):
+    """::: {.poster title=".." footer=".."} + `- icon:battery **Τίτλος** κείμενο` -> αφίσα Α4 με πλέγμα 2×4."""
+    tiles = []
+    for li in _lis(el):
+        body = flat(li)
+        m = re.match(r"^icon:([\w-]+)\s+(.*)$", body, re.S)
+        ic, txt = (m.group(1), m.group(2)) if m else ("check", body)
+        if ic not in ICONS:
+            sys.exit("Άγνωστο εικονίδιο αφίσας: %s" % ic)
+        tiles.append('<div class="ptile">%s<div class="ptext">%s</div></div>' % (
+            ser(icon(ic, "pico", "currentColor", "1.5")), txt))
+    return R('<div class="poster"><div class="poster-title">%s</div><div class="poster-grid">%s</div>'
+             '<div class="poster-foot">%s<span>%s</span></div></div>' % (
+                 esc(el.attrs.get("title", "")), "".join(tiles),
+                 ser(icon("teacher", "pico-s", "currentColor", "1.6")), esc(el.a("footer", ""))))
+
+
+ROLE_COLORS = {"builder": "var(--l1)", "coder": "var(--l3)", "tester": "var(--l5)"}
+
+
+def _cut_line():
+    return '<div class="cutline">%s</div>' % ser(icon("scissors", "cut-ico", "currentColor", "1.6"))
+
+
+def _stars(n):
+    try:
+        n = max(0, min(3, int(n)))
+    except (TypeError, ValueError):
+        n = 1
+    return "★ " * n + "☆ " * (3 - n)
+
+
+def h_halfcards(el):
+    """::: {.halfcards} με παιδιά .rolecard (title, icon, color) ή .challengecard (title, lesson, level / blank):
+    κάθε κάρτα = μισό Α4 (A5 landscape), 2 ανά σελίδα με διακεκομμένη γραμμή κοπής."""
+    cards = []
+    for k in el.kids:
+        if not isinstance(k, El) or k.tag != "div":
+            continue
+        body = [tx(x) for x in k.kids]
+        if "rolecard" in k.classes:
+            col = ROLE_COLORS.get(k.a("color", ""), "var(--text)")
+            cards.append(
+                '<div class="halfcard role" style="--cc:%s">'
+                '<div class="hc-head">%s<div class="hc-title">%s</div></div><div class="hc-body">%s</div></div>' % (
+                    col, ser(icon(k.a("icon", "wrench"), "role-ico", col, "1.6")), esc(k.attrs.get("title", "")),
+                    "".join(ser(x) for x in body)))
+        elif "challengecard" in k.classes:
+            blank = k.a("blank") is not None
+            stars = '<div class="hc-stars">Επίπεδο %s</div>' % _stars(k.a("level", "1"))
+            mat_html, rest = "", []
+            for x in body:
+                if isinstance(x, El) and x.tag == "p" and re.match(r"^\s*<strong>\s*Υλικά", inner(x)):
+                    mat_html = re.sub(r"^\s*<strong>[^<]*</strong>\s*", "", inner(x))
+                else:
+                    rest.append(x)
+            if blank:
+                head = '<div class="hc-head"><div class="hc-title"><span class="flabel">Τίτλος:</span><span class="fline"></span></div>%s</div>' % stars
+                lesson = '<div class="ffield"><span class="flabel">Μάθημα:</span><span class="fline"></span></div>'
+                area = '<div class="hc-area ruled"></div>'
+            else:
+                head = '<div class="hc-head"><div class="hc-title">%s</div>%s</div>' % (esc(k.attrs.get("title", "")), stars)
+                lesson = '<div class="ffield"><span class="flabel">Μάθημα:</span><span class="fval">%s</span></div>' % esc(k.a("lesson", ""))
+                area = '<div class="hc-area">%s</div>' % "".join(ser(x) for x in rest)
+            cards.append('<div class="halfcard challenge" style="--cc:var(--muted)">%s%s%s'
+                         '<div class="hc-mat"><div class="flabel">Υλικά που χρειάζεστε</div><div class="hc-mat-body">%s</div></div></div>'
+                         % (head, lesson, area, mat_html))
+    sheets = []
+    for i in range(0, len(cards), 2):
+        pair = cards[i:i + 2]
+        if len(pair) == 1:
+            pair.append('<div class="halfcard empty"></div>')
+        sheets.append('<div class="cardsheet">%s%s%s</div>' % (pair[0], _cut_line(), pair[1]))
+    return R('<div class="cardsheets">%s</div>' % "".join(sheets))
+
+
 HANDLERS = {
     "glance": h_glance, "materials": h_materials, "timeline": h_timeline,
     "code-figure": h_codefig, "steps": h_steps, "trouble": h_trouble,
@@ -752,7 +947,7 @@ HANDLERS = {
     "aside": h_aside, "humor": h_humor, "challenge": h_challenge, "diff": h_diff,
     "discuss": h_discuss, "build": h_build, "component": h_component,
     "cards": h_cards, "card": h_card, "page-break": h_pagebreak,
-    "figure": h_figure,
+    "figure": h_figure, "form": h_form, "poster": h_poster, "halfcards": h_halfcards,
     "table-lessons": h_passclass("table-lessons"),
     "table-glossary": h_passclass("table-glossary"),
     "table-schedule": h_passclass("table-schedule"),
@@ -765,6 +960,12 @@ def tx(n):
         return n
     if n.tag == "figure" or (n.tag == "div" and "figure" in n.classes):
         return h_figure(n)  # πριν τα παιδιά: χρειάζεται το αρχικό <img>
+    if n.tag == "div":  # πριν τα παιδιά: διαβάζουν το ακατέργαστο markdown (___, ===, - [ ])
+        for c in ("form", "poster", "halfcards"):
+            if c in n.classes:
+                out = HANDLERS[c](n)
+                PRODUCED.add(id(out))
+                return out
     newkids = []
     for k in n.kids:
         if isinstance(k, str) and "___" in k:  # πεδία συμπλήρωσης
@@ -783,6 +984,8 @@ def tx(n):
         return mk("span", "cb on" if "checked" in n.attrs else "cb")
     if n.tag == "li" and any(isinstance(k, El) and k.tag == "span" and "cb" in k.classes for k in n.kids[:1]):
         n.attrs["class"] = (n.attrs.get("class", "") + " task").strip()
+        # το κείμενο (με inline code) μπαίνει σε ένα span: αλλιώς κάθε κομμάτι γίνεται flex item και ανοίγουν κενά
+        n.kids = [n.kids[0], mk("span", "tl", n.kids[1:])]
     if n.tag == "table":
         STATS["plain_tables"] += 1
         return mk("div", "tbl", [n])
@@ -834,12 +1037,16 @@ def build_sections(nodes):
 
 
 def wrap_printables(body):
-    """## … {.printable} + ό,τι ακολουθεί μέχρι το επόμενο h2 -> ένα section.printable-page."""
+    """## … {.printable} + ό,τι ακολουθεί μέχρι το επόμενο h2 -> ένα section.printable-page (data-code «Γx»·
+    κλάση `bare` όταν η σελίδα είναι μόνο κάρτες/αφίσα: ο τίτλος κρύβεται οπτικά)."""
     out, cur = [], None
     for n in body:
         if isinstance(n, El) and n.tag == "h2":
             cur = None
             if "printable" in n.classes:
+                m = re.match(r"^(Γ\d+)", text_of(n).strip())
+                if m:
+                    n.attrs["data-code"] = m.group(1)
                 cur = mk("section", "printable-page", [n])
                 out.append(cur)
                 continue
@@ -847,12 +1054,82 @@ def wrap_printables(body):
             cur.kids.append(n)
         else:
             out.append(n)
+    for sec in out:
+        if isinstance(sec, El) and "printable-page" in sec.classes:
+            if any(isinstance(x, Raw) and ('class="cardsheets"' in x or 'class="poster"' in x) for x in sec.kids):
+                sec.attrs["class"] += " bare"
     return out
 
 
+def link_grid(ul):
+    """Παράρτημα Ε: κάθε ul συνδέσμων -> πλέγμα δύο στηλών από κάρτες (QR 24mm, τίτλος, URL mono, περιγραφή)."""
+    cards = []
+    for li in [k for k in ul.kids if isinstance(k, El) and k.tag == "li"]:
+        a = next((k for k in li.kids if isinstance(k, El) and k.tag == "a"), None)
+        if a is not None and a.attrs.get("href", "").startswith("http"):
+            url = a.attrs["href"]
+            rest = "".join(ser(k) for k in li.kids if k is not a)
+            desc = re.sub(r"^\s*[—–-]\s*", "", rest).strip()
+            qr = qr_svg(url, "qr", 24)
+            if qr is None:
+                STATS["qr_fallback"] += 1
+            short = re.sub(r"^https?://", "", url)
+            cards.append('<div class="link-card"><div class="lc-qr">%s</div><div class="lc-title">%s</div>'
+                         '<a class="lc-url" href="%s">%s</a><div class="lc-desc">%s</div></div>'
+                         % (ser(qr) if qr is not None else "", ser(a), esc(url), esc(short), desc))
+        else:
+            parts = re.split(r"\s+[—–]\s+", flat(li), maxsplit=1)
+            cards.append('<div class="link-card nolink"><div class="lc-title">%s</div><div class="lc-desc">%s</div></div>'
+                         % (parts[0], parts[1] if len(parts) > 1 else ""))
+    return R('<div class="link-grid">%s</div>' % "".join(cards))
+
+
+def md_chapter(path, title):
+    """Ολόκληρο .md του repo (CONTRIBUTORS, CHANGELOG) -> section χωρίς το δικό του h1."""
+    nodes = [tx(n) for n in frag(pandoc(path))]
+    nodes = [n for n in nodes if not (isinstance(n, str) and not n.strip())]
+    if nodes and isinstance(nodes[0], El) and nodes[0].tag == "h1":
+        nodes = nodes[1:]
+    return {"h1": El("h1", {}, [title]), "body": nodes, "endmatter": True}
+
+
+def sample_sections(secs):
+    """Δείγμα: Μέρος 1 (ενότητα 1.1 + 1 καρτέλα εξαρτήματος + 1 Σημείωση), μάθημα 2.1, σελίδα εικονιδίων."""
+    def title(sec):
+        return text_of(sec["h1"]).strip() if sec["h1"] is not None else ""
+    part1 = next(sc for sc in secs if title(sc).startswith("Μέρος 1"))
+    body, take = [], False
+    for n in part1["body"]:
+        if isinstance(n, El) and n.tag == "h2":
+            take = text_of(n).strip().startswith("1.1")
+        if take:
+            body.append(n)
+    comp = next(n for b in part1["body"] for n in walk(b) if isinstance(n, El) and "component-card" in n.classes)
+    note = next(n for b in part1["body"] for n in walk(b) if isinstance(n, El) and "aside" in n.classes)
+    body += [comp, note]
+    lesson = next(sc for sc in secs if title(sc).startswith("Μάθημα 2.1"))
+    # εκτυπώσιμα: η αφίσα (Γ4) και μία σελίδα καρτών ρόλων (Γ1)
+    appx = next(sc for sc in secs if title(sc).startswith("Παράρτημα Γ"))
+    wrapped = [n for n in wrap_printables(appx["body"]) if isinstance(n, El) and "printable-page" in n.classes]
+
+    def pick(code):
+        return next(n for n in wrapped if n.attrs.get("class") and n.kids[0].attrs.get("data-code") == code)
+    poster = pick("Γ4")
+    roles = pick("Γ1")
+    for i, k in enumerate(roles.kids):  # μόνο το πρώτο φύλλο καρτών (2 κάρτες)
+        if isinstance(k, Raw) and 'class="cardsheets"' in k:
+            parts = str(k).split('<div class="cardsheet">')
+            roles.kids[i] = R('<div class="cardsheets"><div class="cardsheet">%s</div>' % parts[1].rstrip()
+                              if len(parts) > 2 else str(k))
+    psec = {"h1": El("h1", {}, ["Εκτυπώσιμα δείγματα"]), "sheets_only": True, "body": [poster, roles]}
+    return [{"h1": part1["h1"], "body": body}, lesson, psec]
+
+
 def main():
-    src_arg = sys.argv[1] if len(sys.argv) > 1 else "content"
-    out_arg = sys.argv[2] if len(sys.argv) > 2 else "dist"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    sample = "--sample" in sys.argv[1:]
+    src_arg = args[0] if len(args) > 0 else "content"
+    out_arg = args[1] if len(args) > 1 else "dist"
     src = None
     for cand in (Path(src_arg), ROOT / src_arg):
         if cand.is_dir():
@@ -864,7 +1141,7 @@ def main():
     if out_arg_p.suffix.lower() == ".html":
         out_path, out_dir = out_arg_p, out_arg_p.parent
     else:
-        out_dir, out_path = out_arg_p, out_arg_p / "index.html"
+        out_dir, out_path = out_arg_p, out_arg_p / ("sample.html" if sample else "index.html")
     out_dir.mkdir(parents=True, exist_ok=True)
     files = sorted(src.glob("[0-9]*.md"), key=lambda p: p.name)  # STYLE_BRIEF.md etc. δεν είναι κεφάλαια
     if not files:
@@ -877,6 +1154,14 @@ def main():
 
     # sections ανά h1
     secs = build_sections(nodes)
+    if sample:
+        secs = sample_sections(secs)
+    else:  # τελικά κεφάλαια, παράγονται από τα CONTRIBUTORS.md / CHANGELOG.md
+        contrib = md_chapter(ROOT / "CONTRIBUTORS.md", "Συντελεστές & Βιβλιογραφία")
+        contrib["body"].append(R('<p class="licence"><b>Άδειες:</b> περιεχόμενο και φωτογραφίες '
+                                 '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.el">CC BY-SA 4.0</a> · '
+                                 'κώδικας και design (tools/, design/) MIT.</p>'))
+        secs += [contrib, md_chapter(ROOT / "CHANGELOG.md", "Ιστορικό εκδόσεων")]
     toc, uid, parts = [], [0], []
     sec_html = []
 
@@ -902,6 +1187,16 @@ def main():
             if m:
                 LEVEL_NAMES[lvl] = m.group(1).strip()
         sc = ["chapter", kind]
+        if s.get("endmatter"):
+            sc.append("endmatter")
+        if s.get("sample_only"):
+            sc.append("sample-only")
+        if s.get("sheets_only"):
+            sc.append("sheets-only")
+        if "printable" in classes:  # Παράρτημα Δ: η ίδια η ενότητα είναι εκτυπώσιμο φύλλο
+            sc.append("printable-chapter")
+            m = re.match(r"^Παράρτημα\s+(\S+)", title)
+            h1.attrs["data-code"] = m.group(1) if m else ""
         if kind in ("lesson", "level-intro") and lvl:
             sc.append("lv" + lvl)
             h1.attrs["class"] = " ".join(sorted(classes))
@@ -914,18 +1209,10 @@ def main():
         for b in body:
             if isinstance(b, El) and b.tag == "h2":
                 hid2 = ensure_id(b)
-                if kind != "lesson":
+                if kind != "lesson" and not s.get("endmatter"):
                     toc.append((2, hid2, text_of(b).strip(), None, kind))
         if link_appx:
-            for b in body:
-                for n in list(walk(b)):
-                    if isinstance(n, El) and n.tag == "li":
-                        a = next((k for k in n.kids if isinstance(k, El) and k.tag == "a"), None)
-                        if a is not None and a.attrs.get("href", "").startswith("http"):
-                            qr = qr_svg(a.attrs["href"], "qr qr-s")
-                            if qr is not None:
-                                n.attrs["class"] = "link-item"
-                                n.kids = [mk("div", "li-text", n.kids), mk("div", "li-qr", [qr])]
+            body = [link_grid(b) if isinstance(b, El) and b.tag == "ul" else b for b in body]
         attrs = {"class": " ".join(sc)}
         if lvl and kind in ("lesson", "level-intro"):
             attrs["data-level"] = lvl
@@ -962,6 +1249,8 @@ def main():
         ".chapter.part{page:part}\n")
 
     tpl = (DESIGN / "template.html").read_text(encoding="utf-8")
+    if sample:  # χωρίς περιεχόμενα στο δείγμα
+        tpl = re.sub(r'<section class="toc">.*?</section>\s*', "", tpl, flags=re.S)
     doc = (tpl.replace("{{TOKENS_CSS}}", tokens).replace("{{PRINT_CSS}}", printcss)
            .replace("{{PAGE_RULES}}", page_rules).replace("{{LEVEL_BAND}}", band)
            .replace("{{VERSION}}", get_version()).replace("{{TOC}}", toc_html).replace("{{BODY}}", "\n".join(sec_html)))
@@ -978,6 +1267,13 @@ def main():
     print("Sections: %d · TOC: %d εγγραφές (placeholders αριθμών σελίδας) · εικόνες-placeholder: %d · "
           "πίνακες (όχι κάρτες): %d · QR fallback σε URL: %d" % (
               len(secs), len(toc), STATS["placeholders"], STATS["plain_tables"], STATS["qr_fallback"]))
+    if QR_LOG:
+        worst = min(QR_LOG, key=lambda r: r[3])
+        longest = max(QR_LOG, key=lambda r: len(r[0]))
+        assert all(r[3] >= QR_MIN_MM_PER_MODULE - 1e-9 for r in QR_LOG), "QR κάτω από 0.55 mm/module"
+        print("QR: %d · μικρότερο %.2f mm/module (%d modules, κουτί %.1f mm) · μακρύτερο URL %d chars -> %.2f mm/module "
+              "(κουτί %.1f mm) · έλεγχος ≥ %.2f: OK" % (len(QR_LOG), worst[3], worst[1] + 8, worst[2], len(longest[0]),
+                                                      longest[3], longest[2], QR_MIN_MM_PER_MODULE))
     left = sum(1 for b in nodes for n in walk(b) if isinstance(n, El) and n.tag == "div"
                and (n.classes & set(HANDLERS)) and id(n) not in PRODUCED and "tbl" not in n.classes
                and not (n.classes & {"table-lessons", "table-glossary", "table-schedule"}))
