@@ -17,13 +17,21 @@
 }
 @page cover{margin:0;
   @top-left{content:"";} @top-right{content:"";} @bottom-left{content:"";} @bottom-right{content:"";}}
-/* Εκτυπώσιμα (Παράρτημα Γ, Δ): αυτόνομα φύλλα· χωρίς κεφαλίδα, χωρίς μπάρα επιπέδου, περιθώρια 15mm,
-   μόνο ένα μικροσκοπικό 7pt υποσέλιδο κάτω δεξιά */
+/* Εκτυπώσιμα (Παράρτημα Γ, Δ): αυτόνομα φύλλα με μόνο ό,τι εκτυπώνεται· χωρίς κεφαλίδα, υποσέλιδο,
+   αριθμό σελίδας ή μπάρα επιπέδου, περιθώρια 15mm */
 @page printable{size:A4;margin:15mm;
   @top-left{content:"";} @top-center{content:"";} @top-right{content:"";}
   @top-left-corner{content:"";} @top-right-corner{content:"";background:none} @right-middle{content:"";background:none}
-  @bottom-left{content:"";} @bottom-center{content:"";} @bottom-left-corner{content:"";} @bottom-right-corner{content:"";background:none}
-  @bottom-right{content:"Οδηγός Δασκάλου · Nezha Inventor's Kit · " string(prcode);font-family:var(--font-head);font-weight:600;font-size:7pt;color:var(--muted);text-align:right;vertical-align:bottom;padding:0}
+  @bottom-left{content:"";} @bottom-center{content:"";} @bottom-right{content:"";}
+  @bottom-left-corner{content:"";} @bottom-right-corner{content:"";background:none}
+}
+
+/* κενές σελίδες που μπαίνουν για να ξεκινά κάτι σε δεξιά σελίδα (εκτύπωση μπρος-πίσω): εντελώς λευκές */
+@page :blank{
+  @top-left{content:"";} @top-center{content:"";} @top-right{content:"";}
+  @top-left-corner{content:"";} @top-right-corner{content:"";background:none} @right-middle{content:"";background:none}
+  @bottom-left{content:"";} @bottom-center{content:"";} @bottom-right{content:"";}
+  @bottom-left-corner{content:"";} @bottom-right-corner{content:"";background:none}
 }
 
 html,body{background:#fff}
@@ -240,9 +248,11 @@ thead{display:table-header-group}
 
 /* ---------- Εκτυπώσιμα: αυτόνομα φύλλα στη σελίδα `printable` (περιεχόμενο 180×267mm) ---------- */
 .printable-page,.chapter.printable-chapter{page:printable}
-.printable-page{break-before:page;max-width:none;display:flex;flex-direction:column;min-height:260mm}
-.printable-page>h2{string-set:prcode attr(data-code);margin:0 0 6mm;font-size:20pt;font-weight:800}
-.chapter.printable-chapter>h1{string-set:chapter content(text),lesson " ",prcode attr(data-code);font-size:20pt;margin:0 0 5mm}
+/* μπρος-πίσω: κάθε εκτυπώσιμο ξεκινά σε δεξιά σελίδα και η πίσω όψη του μένει κενή (κόβεται/φωτοτυπείται χωρίς να χάνεται κάτι) */
+.printable-page{break-before:right;break-after:right;max-width:none;display:flex;flex-direction:column;min-height:260mm}
+.printable-page>h2{margin:0 0 6mm;font-size:20pt;font-weight:800}
+.chapter.printable-chapter{break-before:right;break-after:right}
+.chapter.printable-chapter>h1{string-set:chapter content(text),lesson " ";font-size:20pt;margin:0 0 5mm}
 .chapter.printable-chapter{font-size:11pt;line-height:1.45}
 .chapter.printable-chapter>p{max-width:none;margin:0 0 3.4mm}
 .printable-page.bare>h2{height:0;overflow:hidden;margin:0;padding:0;line-height:0}
@@ -291,8 +301,9 @@ thead{display:table-header-group}
 
 /* ---------- Κάρτες μισού Α4 (.halfcards): A5 landscape, 2 ανά σελίδα, γραμμή κοπής ---------- */
 .cardsheets{flex:1}
-.cardsheet{display:flex;flex-direction:column;height:261mm;break-after:page;page-break-after:always}
-.cardsheet:last-child{break-after:auto;page-break-after:auto}
+/* κάθε φύλλο καρτών σε δική του δεξιά σελίδα (πίσω όψη κενή, για κόψιμο) */
+.cardsheet{display:flex;flex-direction:column;height:261mm;break-after:right}
+.cardsheet:last-child{break-after:auto}
 /* η γραμμή κοπής στη μέση του κενού ανάμεσα στις δύο κάρτες, το ψαλίδι κεντραρισμένο πάνω της */
 .cutline{position:relative;flex:none;height:10.5mm}
 .cutline::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:.35mm dashed #8A97A3}
