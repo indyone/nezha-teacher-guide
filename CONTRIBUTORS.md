@@ -6,14 +6,10 @@
 ## Φωτογραφίες
 - Ιωάννης Σταυρινός ([@indyone](https://github.com/indyone))
 
-## Σχεδίαση
-- — (συμπληρώστε)
-
 ## Εργαλεία
 - Claude (Anthropic): βοήθεια στη συγγραφή, στον μετατροπέα και στο design system
 - [pandoc](https://pandoc.org), [Paged.js](https://pagedjs.org), [Pillow](https://python-pillow.org), [fontsource](https://fontsource.org)
 - [release-please](https://github.com/googleapis/release-please), [git-cliff](https://git-cliff.org)
-- — (συμπληρώστε)
 
 ## Πώς φτιάχτηκε αυτός ο οδηγός
 
