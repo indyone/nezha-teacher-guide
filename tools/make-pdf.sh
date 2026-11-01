@@ -7,7 +7,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 HTML="$ROOT/dist/index.html"
 [[ -f "$HTML" ]] || { echo "Λείπει το dist/index.html — τρέξε πρώτα: make html" >&2; exit 1; }
-VER="$(git describe --tags --always 2>/dev/null || cat VERSION)"
+# ίδια έκδοση με εξώφυλλο/υποσέλιδο (build.py): αρχείο VERSION, αλλιώς το τελευταίο git tag
+VER="$(tr -d '[:space:]' < VERSION 2>/dev/null | sed 's/^v//')"
+[[ -n "$VER" ]] || VER="$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')"
 OUT="$ROOT/dist/odigos-daskalou-$VER.pdf"
 URL="file://$HTML"
 

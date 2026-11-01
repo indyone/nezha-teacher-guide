@@ -18,7 +18,7 @@ Pandoc markdown με *fenced divs* (`::: {.timeline}` κ.ά.). Τα αρχεία
 - Χτίζει sections ανά `#` (Μέρος / Μάθημα / Παράρτημα), TOC με placeholders αριθμών σελίδας, QR σε SVG για συνδέσμους, ονομασμένες σελίδες ανά επίπεδο (χρωματική ταινία στο περιθώριο).
 - Εικόνες: `img/x.jpg` → `assets/img/x.jpg`. Αν λείπει, βγαίνει διακεκομμένο placeholder με τη λεζάντα.
 - Βάζει τα `design/tokens.css`, `design/print.css` και τα παραγόμενα `@page` rules μέσα στο `design/template.html` και γράφει `dist/index.html`. Αντιγράφει `assets/img` → `dist/img` και `assets/vendor` → `dist/assets/vendor`, ώστε το `dist/` να είναι αυτόνομο.
-- Έκδοση: `git describe --tags --always`, αλλιώς το `VERSION` (μπαίνει σε `<meta name="generator">`).
+- Έκδοση: το `VERSION`, αλλιώς το τελευταίο git tag (μπαίνει σε εξώφυλλο, υποσέλιδο και `<meta name="generator">`· το `make-pdf.sh` τη χρησιμοποιεί και στο όνομα του PDF).
 - Στο τέλος τυπώνει στατιστικά και «Μη μετασχηματισμένα components: N» (πρέπει 0· ελέγχεται από `make check`).
 
 ## 4. Paged.js → PDF
