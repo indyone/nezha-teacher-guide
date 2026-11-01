@@ -611,14 +611,16 @@ def h_timeline(el):
     return out
 
 
+QR_MM = 30  # πλάτος κουτιού QR (με quiet zone) σε .linkbox και κάρτες Παραρτήματος Ε
+
+
 def linkbox(title, url):
-    """Λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 22mm δεξιά."""
-    qr = qr_svg(url, "qr", 22)
+    """Λωρίδα: τίτλος-σύνδεσμος αριστερά, QR δεξιά (το URL δεν τυπώνεται· το βρίσκεις με το QR ή με κλικ στο PDF)."""
+    qr = qr_svg(url, "qr", QR_MM)
     if qr is None:
         STATS["qr_fallback"] += 1
-    short = re.sub(r"^https?://", "", url)
-    return R('<div class="linkbox"><div class="lb-text"><span class="lb-title">%s</span>'
-             '<a href="%s">%s</a></div>%s</div>' % (esc(title), esc(url), esc(short), ser(qr) if qr is not None else ""))
+    return R('<div class="linkbox"><div class="lb-text"><a class="lb-title" href="%s">%s</a></div>%s</div>'
+             % (esc(url), esc(title), ser(qr) if qr is not None else ""))
 
 
 def h_codefig(el):
@@ -1081,7 +1083,7 @@ def wrap_printables(body):
 
 
 def link_grid(ul):
-    """Παράρτημα Ε: κάθε ul συνδέσμων -> πλέγμα δύο στηλών από κάρτες (QR 24mm, τίτλος, URL mono, περιγραφή)."""
+    """Παράρτημα Ε: κάθε ul συνδέσμων -> πλέγμα δύο στηλών από κάρτες (QR, τίτλος-σύνδεσμος, περιγραφή)."""
     cards = []
     for li in [k for k in ul.kids if isinstance(k, El) and k.tag == "li"]:
         a = next((k for k in li.kids if isinstance(k, El) and k.tag == "a"), None)
@@ -1089,13 +1091,12 @@ def link_grid(ul):
             url = a.attrs["href"]
             rest = "".join(ser(k) for k in li.kids if k is not a)
             desc = re.sub(r"^\s*[—–-]\s*", "", rest).strip()
-            qr = qr_svg(url, "qr", 24)
+            qr = qr_svg(url, "qr", QR_MM)
             if qr is None:
                 STATS["qr_fallback"] += 1
-            short = re.sub(r"^https?://", "", url)
             cards.append('<div class="link-card"><div class="lc-qr">%s</div><div class="lc-title">%s</div>'
-                         '<a class="lc-url" href="%s">%s</a><div class="lc-desc">%s</div></div>'
-                         % (ser(qr) if qr is not None else "", ser(a), esc(url), esc(short), desc))
+                         '<div class="lc-desc">%s</div></div>'
+                         % (ser(qr) if qr is not None else "", ser(a), desc))
         else:
             parts = re.split(r"\s+[—–]\s+", flat(li), maxsplit=1)
             cards.append('<div class="link-card nolink"><div class="lc-title">%s</div><div class="lc-desc">%s</div></div>'

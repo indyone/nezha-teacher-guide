@@ -136,8 +136,7 @@ img{max-width:100%}
 .linkbox{display:flex;align-items:center;justify-content:space-between;gap:5mm;margin:6mm 0;padding:2.4mm 4mm 2.4mm 5mm;
   background:var(--lv-tint);border-radius:2.5mm;break-inside:avoid}
 .linkbox .lb-text{flex:1;min-width:0}
-.linkbox .lb-title{display:block;font-family:var(--font-head);font-weight:800;font-size:10.5pt;line-height:1.3}
-.linkbox a{border:0;display:block;font-family:var(--font-mono);font-size:8.5pt;color:var(--muted);word-break:break-all;line-height:1.35;margin-top:.6mm}
+.linkbox .lb-title{font-family:var(--font-head);font-weight:800;font-size:11pt;line-height:1.3;border-bottom:.5pt solid var(--rule)}
 .linkbox .qr{flex:none;display:block;margin:-1mm -1.5mm -1mm 0}  /* μέγεθος inline (mm) από το build.py: ≥0.55 mm/module */
 
 /* ---------- Υλικά ---------- */
@@ -227,7 +226,6 @@ figure.fig img{display:block;max-width:100%;max-height:90mm;width:auto;height:au
 .link-card .qr{display:block}
 .link-card .lc-title{font-family:var(--font-head);font-weight:800;font-size:10.5pt;line-height:1.3;margin-bottom:.8mm}
 .link-card .lc-title a{border-bottom:.5pt solid var(--rule)}
-.link-card .lc-url{display:block;border:0;font-family:var(--font-mono);font-size:8pt;line-height:1.35;color:var(--muted);word-break:break-all;overflow-wrap:anywhere;margin-bottom:1mm}
 .link-card .lc-desc{font-size:10pt;line-height:1.4}
 
 /* ---------- Πίνακες (μόνο τα επιτρεπτά) ---------- */
