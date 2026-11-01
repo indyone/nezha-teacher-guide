@@ -4,7 +4,7 @@
    Γεωμετρία: πλήρες πλάτος, μία στήλη. Περιθώρια: πάνω/κάτω 18mm, αριστερά 18mm,
    δεξιά 16mm (στο δεξί περιθώριο η μπάρα επιπέδου 6mm) -> πλάτος περιεχομένου 176mm.
    Οι παράγραφοι/λίστες περιορίζονται σε --measure για αναγνωσιμότητα.
-   Οι σημειώσεις (.aside «Σημείωση», .humor «Για γέλια») είναι πλαίσια μέσα στη ροή.
+   Οι σημειώσεις (.aside «Σημείωση», .humor «Bug ή feature;») είναι πλαίσια μέσα στη ροή.
    ========================================================= */
 :root{ --content:176mm; --measure:155mm; }
 
@@ -113,7 +113,7 @@ img{max-width:100%}
 .callout>p+p{margin-top:1.4mm}
 .callout ul,.callout ol{margin:1mm 0 0;padding-left:4.5mm}
 
-/* ---------- Πλαίσια στη ροή: Σημείωση (.aside), Για γέλια (.humor), Σύνδεσμος (.linkbox) ---------- */
+/* ---------- Πλαίσια στη ροή: Σημείωση (.aside), Bug ή feature; (.humor), Σύνδεσμος (.linkbox) ---------- */
 .aside,.humor{position:relative;--c:var(--note);--bg:var(--note-bg);border-left:3mm solid var(--c);background:var(--bg);
   border-radius:0 2.5mm 2.5mm 0;padding:3.4mm 5mm 3mm 14mm;margin:6mm 0;break-inside:avoid;font-size:10pt;line-height:1.45;color:var(--text)}
 .humor{--c:var(--humor);--bg:var(--humor-bg)}
@@ -321,12 +321,6 @@ thead{display:table-header-group}
 .chapter.endmatter li{margin-bottom:1mm}
 .licence{margin-top:8mm;font-size:10pt;color:var(--muted)}
 
-/* ---------- Δείγμα εικονιδίων «Για γέλια» (μόνο στο --sample) ---------- */
-.variants{display:flex;gap:5mm;margin:6mm 0}
-.variants>div{flex:1 1 0;min-width:0}
-.variants .vlabel{font-family:var(--font-head);font-weight:800;font-size:11pt;margin-bottom:2mm}
-.variants .humor{margin:0;padding:14mm 4mm 3mm 5mm}
-.variants .humor .ico{left:5mm;top:4mm}
 
 /* δείγμα: σελίδες εκτυπώσιμων χωρίς τίτλο κεφαλαίου */
 .chapter.sheets-only>h1{display:none}

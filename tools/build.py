@@ -5,7 +5,7 @@ build.py — Οδηγός Δασκάλου: σημασιολογικό markdown 
 
 Χρήση (από τη ρίζα του repo):  python3 tools/build.py [content] [dist] [--sample]
   * --sample: γράφεται dist/sample.html (δείγμα 3+ σελίδων για έγκριση: εξώφυλλο, ενότητα 1.1 με
-    καρτέλα εξαρτήματος και Σημείωση, μάθημα 2.1, σελίδα με τις 3 εκδοχές εικονιδίου «Για γέλια»)
+    καρτέλα εξαρτήματος και Σημείωση, μάθημα 2.1, εκτυπώσιμα δείγματα)
   * 1ο όρισμα: φάκελος με τα .md (default content/)
   * 2ο όρισμα: φάκελος εξόδου (default dist/)· γράφεται dist/index.html και
     αντιγράφονται τα assets/img -> dist/img και assets/vendor -> dist/assets/vendor
@@ -207,7 +207,7 @@ ICONS = {
 }
 
 
-# Εικονίδια «Για γέλια» (3 εκδοχές, line-art 24x24, stroke currentColor)
+# Εικονίδια «Bug ή feature;» (3 εκδοχές, line-art 24x24, stroke currentColor)
 HUMOR_ICONS = {
     # v1: πρόσωπο που γελά, κλειστά μάτια, ανοιχτό στόμα
     "v1": '<circle cx="12" cy="12" r="9.5"/><path d="M6.8 10.2q1.7-2.4 3.4 0M13.8 10.2q1.7-2.4 3.4 0"/>'
@@ -688,12 +688,12 @@ def h_aside(el):
 
 
 def h_humor(el):
-    """Πλαίσιο «Για γέλια»· εκδοχή εικονιδίου με attribute v="1|2|3" (default 1)."""
+    """Πλαίσιο «Bug ή feature;»· εκδοχή εικονιδίου με attribute v="1|2|3" (default 1)."""
     v = el.a("v", "1")
     v = v if v in ("1", "2", "3") else "1"
     c = mk("div", "humor v" + v)
     c.kids.append(humor_icons())
-    c.kids.append(R('<span class="label">ΓΙΑ ΓΕΛΙΑ</span>'))
+    c.kids.append(R('<span class="label">BUG Ή FEATURE;</span>'))
     c.kids += el.kids
     return c
 
@@ -1108,14 +1108,6 @@ def sample_sections(secs):
     note = next(n for b in part1["body"] for n in walk(b) if isinstance(n, El) and "aside" in n.classes)
     body += [comp, note]
     lesson = next(sc for sc in secs if title(sc).startswith("Μάθημα 2.1"))
-    variants = "".join(
-        '<div><div class="vlabel">Εκδοχή %d</div>%s</div>' % (i, ser(h_humor(El("div", {"v": str(i)}, [
-            R("<p>Το κίτρινο κρατά 2 δευτερόλεπτα. Ρώτα την τάξη ποιος αποφάσισε ότι αρκούν.</p>")]))))
-        for i in (1, 2, 3))
-    vsec = {"h1": El("h1", {}, ["Εικονίδια «Για γέλια» (μόνο στο δείγμα)"]), "sample_only": True, "body": [
-        R("<p>Τρεις εκδοχές εικονιδίου για το πλαίσιο «Για γέλια». Η προεπιλογή είναι η Εκδοχή 1· "
-          "αλλάζει με την κλάση <code>v1</code>, <code>v2</code> ή <code>v3</code>.</p>"),
-        R('<div class="variants">%s</div>' % variants)]}
     # εκτυπώσιμα: η αφίσα (Γ4) και μία σελίδα καρτών ρόλων (Γ1)
     appx = next(sc for sc in secs if title(sc).startswith("Παράρτημα Γ"))
     wrapped = [n for n in wrap_printables(appx["body"]) if isinstance(n, El) and "printable-page" in n.classes]
@@ -1130,7 +1122,7 @@ def sample_sections(secs):
             roles.kids[i] = R('<div class="cardsheets"><div class="cardsheet">%s</div>' % parts[1].rstrip()
                               if len(parts) > 2 else str(k))
     psec = {"h1": El("h1", {}, ["Εκτυπώσιμα δείγματα"]), "sheets_only": True, "body": [poster, roles]}
-    return [{"h1": part1["h1"], "body": body}, lesson, vsec, psec]
+    return [{"h1": part1["h1"], "body": body}, lesson, psec]
 
 
 def main():
