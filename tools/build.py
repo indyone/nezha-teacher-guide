@@ -851,7 +851,7 @@ def h_form(el):
                     out.append('<ul class="fchecks">%s</ul>' % "".join(checks))
                     checks.clear()
             for li in [x for x in k.kids if isinstance(x, El) and x.tag == "li"]:
-                body = flat(li)
+                body = re.sub(r"^<label>(.*)</label>$", r"\1", flat(li), flags=re.S)  # pandoc 3
                 m = CHECK_RE.match(body)
                 if m:
                     checks.append(form_check(m.group(1)))
@@ -982,6 +982,10 @@ def tx(n):
         return El("span", {"class": "chip"}, n.kids)
     if n.tag == "input" and n.attrs.get("type") == "checkbox":
         return mk("span", "cb on" if "checked" in n.attrs else "cb")
+    # pandoc 3: <li><label><input>κείμενο</label></li> — ξετυλίγουμε το label ώστε να ισχύει το ίδιο με pandoc 2
+    if n.tag == "li" and n.kids and isinstance(n.kids[0], El) and n.kids[0].tag == "label" \
+            and any(isinstance(k, El) and k.tag == "span" and "cb" in k.classes for k in n.kids[0].kids[:1]):
+        n.kids = n.kids[0].kids + n.kids[1:]
     if n.tag == "li" and any(isinstance(k, El) and k.tag == "span" and "cb" in k.classes for k in n.kids[:1]):
         n.attrs["class"] = (n.attrs.get("class", "") + " task").strip()
         # το κείμενο (με inline code) μπαίνει σε ένα span: αλλιώς κάθε κομμάτι γίνεται flex item και ανοίγουν κενά
