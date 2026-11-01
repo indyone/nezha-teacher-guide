@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="odigos-daskalou {{VERSION}}">
+<title>Οδηγός Δασκάλου · Nezha Inventor's Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@600;800&amp;family=JetBrains+Mono:wght@400&amp;family=Source+Sans+3:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>
+/* ===== tokens.css ===== */
+{{TOKENS_CSS}}
+/* ===== print.css ===== */
+{{PRINT_CSS}}
+/* ===== ονομασμένες σελίδες επιπέδων (παράγονται από το build.py) ===== */
+{{PAGE_RULES}}
+</style>
+<script>
+  // Paged.js: χωρίς αυτόματο preview ώστε να ξεκινά αφού φορτώσουν οι γραμματοσειρές
+  window.PagedConfig = { auto: false };
+  (function () {
+    var sources = [
+      "assets/vendor/paged.polyfill.js",   // τοπικό αντίγραφο (make assets) — πρώτη επιλογή
+      "https://unpkg.com/pagedjs@0.4.3/dist/paged.polyfill.js",
+      "https://cdn.jsdelivr.net/npm/pagedjs@0.4.3/dist/paged.polyfill.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/pagedjs/0.4.3/paged.polyfill.min.js"
+    ];
+    var i = 0;
+    function run() {
+      var go = function () { try { window.PagedPolyfill.preview(); } catch (e) { console.error("Paged.js:", e); } };
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go, go);
+    }
+    function load() {
+      if (i >= sources.length) { console.error("Paged.js δεν φορτώθηκε από καμία πηγή"); return; }
+      var s = document.createElement("script");
+      s.src = sources[i++];
+      s.onload = function () {
+        if (document.readyState === "complete") run();
+        else window.addEventListener("load", run);
+      };
+      s.onerror = load;
+      document.head.appendChild(s);
+    }
+    load();
+  })();
+</script>
+</head>
+<body>
+
+<section class="cover">
+  <div class="cover-top">
+    <p class="cover-kicker">Nezha Inventor's Kit</p>
+    <h1 class="cover-title no-toc">Οδηγός Δασκάλου</h1>
+    <p class="cover-sub">Ρομποτική &amp; STEM με το Nezha Inventor's Kit</p>
+  </div>
+  <div class="cover-bottom">
+    <div class="level-band">{{LEVEL_BAND}}</div>
+    <p class="cover-edition">Έκδοση 1 · 2026</p>
+  </div>
+</section>
+
+<section class="toc">
+  <h1 class="toc-title">Περιεχόμενα</h1>
+  {{TOC}}
+</section>
+
+<main>
+{{BODY}}
+</main>
+
+</body>
+</html>
