@@ -27,6 +27,9 @@ html,body{background:#fff}
 }
 body{margin:0;font-size:11.5pt;line-height:1.55;orphans:3;widows:3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 p{orphans:3;widows:3}
+/* στοίχιση: πάντα αριστερά (όχι justify) σε κείμενο, λίστες, checklists· χωρίς αυτόματη συλλαβοδιαίρεση */
+body,p,li,dd,dt,blockquote,td,th,.task,.ftext{text-align:left;hyphens:manual;-webkit-hyphens:manual;word-spacing:normal;letter-spacing:normal}
+code,.mono{word-spacing:0;letter-spacing:0;padding:0 .15em;white-space:normal}
 a{color:inherit;text-decoration:none;border-bottom:.5pt solid var(--rule)}
 
 /* ---------- Δομή ---------- */
@@ -37,7 +40,6 @@ h1{string-set:chapter content(text),lesson " "}
 h1.lesson{string-set:chapter content(text),lesson attr(data-label)}
 h1,h2,h3{break-after:avoid;break-inside:avoid;page-break-after:avoid}
 .chapter>p,.chapter>ul>li,.chapter>ol>li{max-width:var(--measure)}
-.chapter>ul>li.link-item{max-width:none}
 .chapter>h1{font-size:28pt;margin:0 0 6mm}
 .chapter.level-intro>h1,.chapter.part>h1{font-size:30pt}
 .chapter.level-intro>h1::before{content:"";display:block;width:14mm;height:2.2mm;background:var(--lv);border-radius:1mm;margin-bottom:4mm}
@@ -119,7 +121,7 @@ img{max-width:100%}
 .linkbox .lb-text{flex:1;min-width:0}
 .linkbox .lb-title{display:block;font-family:var(--font-head);font-weight:800;font-size:10.5pt;line-height:1.3}
 .linkbox a{border:0;display:block;font-family:var(--font-mono);font-size:8.5pt;color:var(--muted);word-break:break-all;line-height:1.35;margin-top:.6mm}
-.linkbox .qr{flex:none;width:16mm;height:16mm;display:block}
+.linkbox .qr{flex:none;display:block;margin:-1mm -1.5mm -1mm 0}  /* μέγεθος inline (mm) από το build.py: ≥0.55 mm/module */
 
 /* ---------- Υλικά ---------- */
 .materials{list-style:none;margin:6mm 0;padding:0;display:flex;flex-wrap:wrap;break-inside:avoid}
@@ -193,6 +195,7 @@ figcaption{font-size:9pt}
 /* ---------- Λίστες ελέγχου, πεδία ---------- */
 ul.task-list{list-style:none;padding-left:0}
 li.task{display:flex;align-items:flex-start;gap:2.4mm}
+li.task>.tl{flex:1;min-width:0}
 .cb{flex:none;display:inline-block;width:4mm;height:4mm;border:1pt solid var(--text);border-radius:.8mm;margin-top:.9mm;background:#fff}
 .cb.on{background:var(--text);box-shadow:inset 0 0 0 .8mm #fff}
 .fill{display:inline-block;min-width:45mm;border-bottom:.6pt solid var(--text);height:1em;vertical-align:baseline}
@@ -200,11 +203,15 @@ li.task{display:flex;align-items:flex-start;gap:2.4mm}
 /* ---------- Εικόνες, σύνδεσμοι ---------- */
 figure.fig{margin:6mm 0;break-inside:avoid}
 figure.fig img{display:block;max-width:100%;max-height:90mm;width:auto;height:auto;margin:0 auto;object-fit:contain;border-radius:2mm}
-.link-item{list-style:none;display:flex;align-items:center;gap:4mm;margin:0 0 1.5mm;break-inside:avoid;max-width:none}
-.link-item .li-text{flex:1;min-width:0}
-.link-item .li-qr{flex:none}
-.link-item .qr{width:12mm;height:12mm;display:block}
-.chapter>ul:has(.link-item){list-style:none;padding-left:0}
+/* Παράρτημα Ε: πλέγμα δύο στηλών από κάρτες συνδέσμων */
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin:4mm 0 6mm}
+.link-card{break-inside:avoid;page-break-inside:avoid;min-width:0}
+.link-card .lc-qr{margin:0 0 1.5mm}
+.link-card .qr{display:block}
+.link-card .lc-title{font-family:var(--font-head);font-weight:800;font-size:10.5pt;line-height:1.3;margin-bottom:.8mm}
+.link-card .lc-title a{border-bottom:.5pt solid var(--rule)}
+.link-card .lc-url{display:block;border:0;font-family:var(--font-mono);font-size:8pt;line-height:1.35;color:var(--muted);word-break:break-all;overflow-wrap:anywhere;margin-bottom:1mm}
+.link-card .lc-desc{font-size:10pt;line-height:1.4}
 
 /* ---------- Πίνακες (μόνο τα επιτρεπτά) ---------- */
 .tbl{margin:6mm 0}

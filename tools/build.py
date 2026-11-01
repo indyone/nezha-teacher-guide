@@ -228,7 +228,7 @@ def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
 
 
 # ----------------------------------------------------------------------------
-# Ελάχιστος κωδικοποιητής QR (byte mode, EC level L, εκδόσεις 1–10, ≤271 bytes)
+# Ελάχιστος κωδικοποιητής QR (byte mode, EC level L, εκδόσεις 1–14, ≤458 bytes)
 # ----------------------------------------------------------------------------
 # έκδοση: (σύνολο data cw, ec cw ανά block, [(πλήθος blocks, data cw ανά block), ...])
 _QR_L = {
@@ -236,9 +236,12 @@ _QR_L = {
     4: (80, 20, [(1, 80)]), 5: (108, 26, [(1, 108)]), 6: (136, 18, [(2, 68)]),
     7: (156, 20, [(2, 78)]), 8: (194, 24, [(2, 97)]), 9: (232, 30, [(2, 116)]),
     10: (274, 18, [(2, 68), (2, 69)]),
+    11: (324, 20, [(4, 81)]), 12: (370, 24, [(2, 92), (2, 93)]), 13: (428, 26, [(4, 107)]),
+    14: (461, 30, [(3, 115), (1, 116)]),
 }
 _QR_ALIGN = {1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34],
-             7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50]}
+             7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50],
+             11: [6, 30, 54], 12: [6, 32, 58], 13: [6, 34, 62], 14: [6, 26, 46, 66]}
 
 
 def _gf_mul(x, y):
@@ -274,7 +277,7 @@ def _rs_rem(data, gen):
 def qr_matrix(text):
     data = text.encode("utf-8")
     ver = None
-    for v in range(1, 11):
+    for v in range(1, 15):
         cap = _QR_L[v][0] - (2 if v < 10 else 3)
         if len(data) <= cap:
             ver = v
@@ -437,16 +440,28 @@ def qr_matrix(text):
     return best[2]
 
 
-def qr_svg(url, cls="qr"):
+QR_MIN_MM_PER_MODULE = 0.55   # κάτω όριο αναγνωσιμότητας (mm ανά module)
+QR_QUIET = 4                  # quiet zone: 4 modules
+QR_LOG = []                   # (url, modules, mm_box, mm_per_module) για τον αυτοέλεγχο
+
+
+def qr_svg(url, cls="qr", mm=22):
+    """QR καθαρό μαύρο σε λευκό, quiet zone 4 modules. Το `mm` είναι το πλάτος του κουτιού (με quiet zone)·
+    αν δίνει < 0.55 mm/module (μεγάλα URL), το κουτί μεγαλώνει ώστε να μείνει σαρώσιμο."""
     m = qr_matrix(url)
     if m is None:
         return None
-    n, q = len(m), 2
+    n = len(m)
+    q = QR_QUIET
+    side = n + 2 * q
+    box = max(float(mm), QR_MIN_MM_PER_MODULE * side)
     d = "".join("M%d %dh1v1h-1z" % (x + q, y + q) for y in range(n) for x in range(n) if m[y][x])
+    QR_LOG.append((url, n, box, box / side))
     return R(
-        '<svg class="%s" viewBox="0 0 %d %d" shape-rendering="crispEdges" role="img" '
-        'aria-label="QR: %s"><rect width="100%%" height="100%%" fill="#fff"/><path d="%s" fill="#22303C"/></svg>'
-        % (cls, n + 2 * q, n + 2 * q, esc(url), d)
+        '<svg class="%s" viewBox="0 0 %d %d" width="%.2fmm" height="%.2fmm" style="width:%.2fmm;height:%.2fmm" '
+        'shape-rendering="crispEdges" role="img" aria-label="QR: %s"><rect width="%d" height="%d" fill="#fff"/>'
+        '<path d="%s" fill="#000"/></svg>'
+        % (cls, side, side, box, box, box, box, esc(url), side, side, d)
     )
 
 
@@ -574,8 +589,8 @@ def h_timeline(el):
 
 
 def linkbox(title, url):
-    """Λεπτή λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 16mm δεξιά."""
-    qr = qr_svg(url)
+    """Λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 22mm δεξιά."""
+    qr = qr_svg(url, "qr", 22)
     if qr is None:
         STATS["qr_fallback"] += 1
     short = re.sub(r"^https?://", "", url)
@@ -813,6 +828,8 @@ def tx(n):
         return mk("span", "cb on" if "checked" in n.attrs else "cb")
     if n.tag == "li" and any(isinstance(k, El) and k.tag == "span" and "cb" in k.classes for k in n.kids[:1]):
         n.attrs["class"] = (n.attrs.get("class", "") + " task").strip()
+        # το κείμενο (με inline code) μπαίνει σε ένα span: αλλιώς κάθε κομμάτι γίνεται flex item και ανοίγουν κενά
+        n.kids = [n.kids[0], mk("span", "tl", n.kids[1:])]
     if n.tag == "table":
         STATS["plain_tables"] += 1
         return mk("div", "tbl", [n])
@@ -878,6 +895,29 @@ def wrap_printables(body):
         else:
             out.append(n)
     return out
+
+
+def link_grid(ul):
+    """Παράρτημα Ε: κάθε ul συνδέσμων -> πλέγμα δύο στηλών από κάρτες (QR 24mm, τίτλος, URL mono, περιγραφή)."""
+    cards = []
+    for li in [k for k in ul.kids if isinstance(k, El) and k.tag == "li"]:
+        a = next((k for k in li.kids if isinstance(k, El) and k.tag == "a"), None)
+        if a is not None and a.attrs.get("href", "").startswith("http"):
+            url = a.attrs["href"]
+            rest = "".join(ser(k) for k in li.kids if k is not a)
+            desc = re.sub(r"^\s*[—–-]\s*", "", rest).strip()
+            qr = qr_svg(url, "qr", 24)
+            if qr is None:
+                STATS["qr_fallback"] += 1
+            short = re.sub(r"^https?://", "", url)
+            cards.append('<div class="link-card"><div class="lc-qr">%s</div><div class="lc-title">%s</div>'
+                         '<a class="lc-url" href="%s">%s</a><div class="lc-desc">%s</div></div>'
+                         % (ser(qr) if qr is not None else "", ser(a), esc(url), esc(short), desc))
+        else:
+            parts = re.split(r"\s+[—–]\s+", flat(li), maxsplit=1)
+            cards.append('<div class="link-card nolink"><div class="lc-title">%s</div><div class="lc-desc">%s</div></div>'
+                         % (parts[0], parts[1] if len(parts) > 1 else ""))
+    return R('<div class="link-grid">%s</div>' % "".join(cards))
 
 
 def md_chapter(path, title):
@@ -996,15 +1036,7 @@ def main():
                 if kind != "lesson" and not s.get("endmatter"):
                     toc.append((2, hid2, text_of(b).strip(), None, kind))
         if link_appx:
-            for b in body:
-                for n in list(walk(b)):
-                    if isinstance(n, El) and n.tag == "li":
-                        a = next((k for k in n.kids if isinstance(k, El) and k.tag == "a"), None)
-                        if a is not None and a.attrs.get("href", "").startswith("http"):
-                            qr = qr_svg(a.attrs["href"], "qr")
-                            if qr is not None:
-                                n.attrs["class"] = "link-item"
-                                n.kids = [mk("div", "li-text", n.kids), mk("div", "li-qr", [qr])]
+            body = [link_grid(b) if isinstance(b, El) and b.tag == "ul" else b for b in body]
         attrs = {"class": " ".join(sc)}
         if lvl and kind in ("lesson", "level-intro"):
             attrs["data-level"] = lvl
@@ -1059,6 +1091,13 @@ def main():
     print("Sections: %d · TOC: %d εγγραφές (placeholders αριθμών σελίδας) · εικόνες-placeholder: %d · "
           "πίνακες (όχι κάρτες): %d · QR fallback σε URL: %d" % (
               len(secs), len(toc), STATS["placeholders"], STATS["plain_tables"], STATS["qr_fallback"]))
+    if QR_LOG:
+        worst = min(QR_LOG, key=lambda r: r[3])
+        longest = max(QR_LOG, key=lambda r: len(r[0]))
+        assert all(r[3] >= QR_MIN_MM_PER_MODULE - 1e-9 for r in QR_LOG), "QR κάτω από 0.55 mm/module"
+        print("QR: %d · μικρότερο %.2f mm/module (%d modules, κουτί %.1f mm) · μακρύτερο URL %d chars -> %.2f mm/module "
+              "(κουτί %.1f mm) · έλεγχος ≥ %.2f: OK" % (len(QR_LOG), worst[3], worst[1] + 8, worst[2], len(longest[0]),
+                                                      longest[3], longest[2], QR_MIN_MM_PER_MODULE))
     left = sum(1 for b in nodes for n in walk(b) if isinstance(n, El) and n.tag == "div"
                and (n.classes & set(HANDLERS)) and id(n) not in PRODUCED and "tbl" not in n.classes
                and not (n.classes & {"table-lessons", "table-glossary", "table-schedule"}))

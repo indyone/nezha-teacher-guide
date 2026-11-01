@@ -114,7 +114,7 @@ p{margin:0 0 4.5mm}
 .small{font-size:var(--fs-small);line-height:1.4}
 .muted{color:var(--muted)}
 .lead{font-size:12pt;line-height:1.45}
-code,.mono{font-family:var(--font-mono);font-size:.86em;background:var(--chip);padding:.2mm 1.2mm;border-radius:1mm}
+code,.mono{font-family:var(--font-mono);font-size:.86em;background:var(--chip);padding:0 .15em;border-radius:1mm}
 figcaption,.caption{font-size:var(--fs-caption);font-style:italic;color:var(--muted);line-height:1.35;margin-top:1.5mm}
 .caption b{font-style:normal;font-weight:600;color:var(--text)}
 
