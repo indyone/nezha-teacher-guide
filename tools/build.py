@@ -585,18 +585,29 @@ def h_materials(el):
     return out
 
 
+TIMELINE_PILL_MAX = 8  # χαρακτήρες που χωρά το pill 17mm (π.χ. «28–40'»)
+
+
 def h_timeline(el):
     ul = next((k for k in el.kids if isinstance(k, El) and k.tag in ("ul", "ol")), None)
     out = mk("ol", "timeline")
     if ul is None:
         return el
+    items = []
     for li in [k for k in ul.kids if isinstance(k, El) and k.tag == "li"]:
         s = flat(li)
         m = re.match(r"^<strong>(.*?)</strong>\s*(.*)$", s, re.S)
-        if m:
-            out.kids.append(R('<li><span class="min">%s</span>%s</li>' % (m.group(1), m.group(2))))
+        items.append((m.group(1), m.group(2)) if m else (None, s))
+    # αν έστω μία ετικέτα δεν χωρά στο pill (π.χ. «1η συνάντηση, 0–15'»), όλη η χρονογραμμή
+    # γράφει 1, 2, 3… στα pills και η ετικέτα πάει έντονη στην αρχή του κειμένου
+    numbered = any(lbl and len(htmllib.unescape(re.sub(r"<[^>]+>", "", lbl))) > TIMELINE_PILL_MAX for lbl, _ in items)
+    for n, (lbl, rest) in enumerate(items, 1):
+        if lbl is None:
+            out.kids.append(R("<li>%s</li>" % rest))
+        elif numbered:
+            out.kids.append(R('<li><span class="min">%d</span><strong>%s</strong> · %s</li>' % (n, lbl, rest)))
         else:
-            out.kids.append(R("<li>%s</li>" % s))
+            out.kids.append(R('<li><span class="min">%s</span>%s</li>' % (lbl, rest)))
     return out
 
 
