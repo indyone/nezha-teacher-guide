@@ -1,0 +1,55 @@
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  build-and-attach:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
+      - run: make assets
+      - run: make html
+      - run: npx --yes playwright install --with-deps chromium
+      - run: make pdf
+      - name: Name release files
+        run: |
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          cp dist/odigos-daskalou-*.pdf "dist/odigos-daskalou-${TAG}.pdf" 2>/dev/null || true
+          cp dist/index.html "dist/odigos-daskalou-${TAG}.html"
+          (cd dist && zip -qr "odigos-daskalou-${TAG}-html-bundle.zip" index.html img assets)
+      - name: Attach to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          gh release upload "$TAG" "dist/odigos-daskalou-${TAG}.pdf" "dist/odigos-daskalou-${TAG}.html" "dist/odigos-daskalou-${TAG}-html-bundle.zip" --clobber

@@ -1,0 +1,13 @@
+dist/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+_thumbs/
+photos_raw/
+raw/
+*.tmp
+.venv/
+# εξαρτήσεις που κατεβαίνουν με `make assets` (κρατιέται μόνο το .gitkeep)
+assets/vendor/*
+!assets/vendor/.gitkeep
