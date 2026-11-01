@@ -191,9 +191,33 @@ ICONS = {
 def icon(name, cls="ico", stroke="#22303C", sw="1.6"):
     return R(
         '<svg class="%s" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="%s" '
+    "pin": '<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 4.9-6.5 10.5-6.5 10.5z"/><circle cx="12" cy="10.5" r="2.4"/>',
         'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>'
         % (cls, stroke, sw, ICONS[name])
     )
+
+# Εικονίδια «Για γέλια» (3 εκδοχές, line-art 24x24, stroke currentColor)
+HUMOR_ICONS = {
+    # v1: πρόσωπο που γελά, κλειστά μάτια, ανοιχτό στόμα
+    "v1": '<circle cx="12" cy="12" r="9.5"/><path d="M6.8 10.2q1.7-2.4 3.4 0M13.8 10.2q1.7-2.4 3.4 0"/>'
+          '<path d="M6.6 13.6h10.8c0 3.4-2.4 5.6-5.4 5.6s-5.4-2.2-5.4-5.6z"/><path d="M9.6 17.4q2.4-1.6 4.8 0"/>',
+    # v2: μύτη κλόουν + καπέλο πάρτι
+    "v2": '<path d="M12 1.8l-3.6 6.6h7.2z"/><circle cx="12" cy="1.8" r=".7"/><circle cx="12" cy="15" r="7.2"/>'
+          '<path d="M9.2 12.6v.4M14.8 12.6v.4"/><circle cx="12" cy="15.2" r="1.6"/><path d="M8.6 18.2q3.4 2.6 6.8 0"/>',
+    # v3: φούσκα ομιλίας με «ha!» και χαμόγελο
+    "v3": '<path d="M3 3.5h18v13H10.5L6 21v-4.5H3z"/><path d="M9.2 12.8q2.8 2 5.6 0"/>'
+          '<text x="12" y="10.2" text-anchor="middle" font-size="6.2" font-weight="800" fill="currentColor" '
+          'stroke="none" font-family="Commissioner,Lato,Arial,sans-serif">ha!</text>',
+}
+
+
+def humor_icons():
+    """και οι τρεις εκδοχές inline· το CSS (.humor.v1/.v2/.v3) δείχνει μόνο μία."""
+    return R("".join(
+        '<svg class="ico ico-%s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>' % (k, v)
+        for k, v in HUMOR_ICONS.items()))
+
 
 
 # ----------------------------------------------------------------------------
@@ -549,24 +573,20 @@ def h_codefig(el):
     if m:
         num = m.group(1).replace("-", ".")
     else:
+def linkbox(title, url):
+    """Λεπτή λωρίδα: τίτλος + URL (mono 8.5pt) αριστερά, QR 16mm δεξιά."""
+    qr = qr_svg(url)
+    if qr is None:
+        STATS["qr_fallback"] += 1
+    short = re.sub(r"^https?://", "", url)
+    return R('<div class="linkbox"><div class="lb-text"><span class="lb-title">%s</span>'
+             '<a href="%s">%s</a></div>%s</div>' % (esc(title), esc(url), esc(short), ser(qr) if qr is not None else ""))
+
+
         STATS["fig_counter"] += 1
         num = str(STATS["fig_counter"])
     fig = mk("figure", "code-figure", **({"id": fid} if fid else {}))
-    row = mk("div", "cf-row")
-    main = mk("div", "cf-main")
-    main.kids.append(img_or_placeholder(src, cap or "Κώδικας"))
-    row.kids.append(main)
-    if link:
-        qr = qr_svg(link)
-        side = mk("div", "cf-link")
-        if qr is not None:
-            side.kids.append(qr)
-            side.kids.append(R('<a href="%s">Άνοιξε τον κώδικα</a>' % esc(link)))
-        else:
-            STATS["qr_fallback"] += 1
-            side.kids.append(R('<a href="%s">Άνοιξε τον κώδικα</a><span class="url">%s</span>' % (esc(link), esc(link))))
-        row.kids.append(side)
-    fig.kids.append(row)
+    fig.kids.append(img_or_placeholder(src, cap or "Κώδικας"))
     fig.kids.append(R("<figcaption><b>Εικόνα %s</b> – %s</figcaption>" % (esc(num), esc(cap))))
     return fig
 
@@ -575,6 +595,8 @@ def h_steps(el):
     ol = next((k for k in el.kids if isinstance(k, El) and k.tag in ("ol", "ul")), None)
     out = mk("ol", "steps")
     if ol is None:
+    if link:
+        fig.kids.append(linkbox("Άνοιξε τον κώδικα", link))
         return el
     i = 0
     for li in [k for k in ol.kids if isinstance(k, El) and k.tag == "li"]:
@@ -622,16 +644,23 @@ def make_callout(kind):
 
 def h_aside(el):
     c = mk("div", "aside")
-    c.kids.append(icon("info"))
-    c.kids.append(R('<span class="label">%s</span>' % esc(el.attrs.get("title") or "Στο περιθώριο")))
+    c.kids.append(icon("pin", "ico", "currentColor"))
+    c.kids.append(R('<span class="label">%s</span>' % esc(label)))
     c.kids += el.kids
     return c
 
 
+    """Πλαίσιο «Σημείωση» μέσα στη ροή."""
+    label = "ΣΗΜΕΙΩΣΗ"
+    if el.attrs.get("title"):
+        label += " · " + el.attrs["title"]
 def h_humor(el):
-    c = mk("div", "aside humor")
-    c.kids.append(icon("smile"))
-    c.kids.append(R('<span class="label">%s</span>' % esc(el.attrs.get("title") or "Μικρή παρατήρηση")))
+    """Πλαίσιο «Για γέλια»· εκδοχή εικονιδίου με attribute v="1|2|3" (default 1)."""
+    v = el.a("v", "1")
+    v = v if v in ("1", "2", "3") else "1"
+    c = mk("div", "humor v" + v)
+    c.kids.append(humor_icons())
+    c.kids.append(R('<span class="label">ΓΙΑ ΓΕΛΙΑ</span>'))
     c.kids += el.kids
     return c
 
@@ -674,13 +703,7 @@ def h_build(el):
     head = '<div class="bh">%s<span class="label">Σημειώσεις κατασκευής</span></div>' % ser(icon("wrench"))
     out.kids.append(R(head))
     if url:
-        qr = qr_svg(url, "qr qr-s")
-        short = re.sub(r"^https?://", "", url)
-        body = '<div class="b-link"><div><a href="%s">Οδηγίες βήμα-βήμα στο wiki</a><span class="url">%s</span></div>%s</div>' % (
-            esc(url), esc(short), ser(qr) if qr is not None else "")
-        if qr is None:
-            STATS["qr_fallback"] += 1
-        out.kids.append(R(body))
+        out.kids.append(linkbox("Οδηγίες κατασκευής", url))
     out.kids += el.kids
     return out
 
@@ -922,7 +945,7 @@ def main():
                     if isinstance(n, El) and n.tag == "li":
                         a = next((k for k in n.kids if isinstance(k, El) and k.tag == "a"), None)
                         if a is not None and a.attrs.get("href", "").startswith("http"):
-                            qr = qr_svg(a.attrs["href"], "qr qr-s")
+                            qr = qr_svg(a.attrs["href"], "qr")
                             if qr is not None:
                                 n.attrs["class"] = "link-item"
                                 n.kids = [mk("div", "li-text", n.kids), mk("div", "li-qr", [qr])]
