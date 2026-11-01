@@ -28,7 +28,14 @@
     ];
     var i = 0;
     function run() {
-      var go = function () { try { window.PagedPolyfill.preview(); } catch (e) { console.error("Paged.js:", e); } };
+      // σήμα για το make-pdf: data-paged="done" μόλις τελειώσει η σελιδοποίηση, "error" αν αποτύχει
+      var mark = function (v) { document.documentElement.setAttribute("data-paged", v); };
+      var go = function () {
+        try {
+          Promise.resolve(window.PagedPolyfill.preview()).then(function () { mark("done"); },
+            function (e) { console.error("Paged.js:", e); mark("error"); });
+        } catch (e) { console.error("Paged.js:", e); mark("error"); }
+      };
       (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go, go);
     }
     function load() {
