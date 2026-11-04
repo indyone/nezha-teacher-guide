@@ -1,5 +1,5 @@
 // Μάθημα 3.5 – Ανιχνευτής εισβολέα
-// Πηγή: γράφτηκε από τα βήματα του μαθήματος. Θέλει δοκιμή σε πραγματικό kit.
+// Πηγή: γράφτηκε από τα βήματα του μαθήματος· δημοσιεύτηκε ως https://makecode.microbit.org/_DkHTViAoKDjt (4/11/2026). Θέλει δοκιμή σε πραγματικό kit.
 // extensions: pxt-PlanetX=github:elecfreaks/pxt-planetx#v1.6.9
 // εκδόσεις extensions: οι τελευταίες (4/11/2026)
 basic.forever(function () {

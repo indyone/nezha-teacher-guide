@@ -1,5 +1,5 @@
 // Μάθημα 4.2 – Αυτοκίνητο που αποφεύγει εμπόδια
-// Πηγή: γράφτηκε από τα βήματα του μαθήματος (το παλιό link _MyUJpP6L9YPo δεν υπάρχει πια). Θέλει δοκιμή σε πραγματικό kit.
+// Πηγή: γράφτηκε από τα βήματα του μαθήματος (το παλιό link _MyUJpP6L9YPo δεν υπάρχει πια)· δημοσιεύτηκε ως https://makecode.microbit.org/_FmXFRx0mjTyR (4/11/2026). Θέλει δοκιμή σε πραγματικό kit.
 // extensions: pxt-PlanetX=github:elecfreaks/pxt-planetx#v1.6.9, pxt-nezha=github:elecfreaks/pxt-nezha#v1.3.11
 // εκδόσεις extensions: οι τελευταίες (4/11/2026)
 let i = 0

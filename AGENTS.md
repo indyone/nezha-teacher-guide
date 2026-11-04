@@ -56,6 +56,5 @@ docs: ενημέρωση ανοιχτών σημείων
 ## Γνωστά ανοιχτά σημεία
 
 - Οι εικόνες κώδικα βγαίνουν από το `tools/code/*.ts` με `make code-images` (θέλει internet). Αν αλλάξει ο κώδικας ενός μαθήματος, άλλαξε το `.ts` και ξανατρέξε.
-- Τα 3.5, 4.1 και 4.2 δεν έχουν σύνδεσμο MakeCode (βλ. [decisions-and-open-items §9](docs/decisions-and-open-items.md)).
 - Φωτογραφίες μαθημάτων (κατασκευές) και φωτογραφία χάρτη πίστας (`img/track-map.jpg`) λείπουν.
 - Η πλήρης λίστα: [docs/decisions-and-open-items.md](docs/decisions-and-open-items.md) και [docs/review-report-v0.md](docs/review-report-v0.md).
