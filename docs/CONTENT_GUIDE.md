@@ -17,7 +17,7 @@
 | Με μια ματιά | `::: {.glance level="2" dd="2" dm="2" time="40" grades="Γ'–ΣΤ'" concept="…"}` | μία ανά μάθημα, αμέσως μετά τον τίτλο |
 | Υλικά και θύρες | `::: {.materials}` | λίστες υλικών/θυρών |
 | Χρονογραμμή | `::: {.timeline}` | ροή μαθήματος |
-| Κώδικας | `::: {.code-figure id="fig-2-1" src="img/code-2-1.png" caption="…" link="https://makecode…"}` | screenshot + QR |
+| Κώδικας | `::: {.code-figure id="fig-2-1" src="img/code-2-1.png" caption="…" link="https://makecode…"}` | εικόνα από το `tools/code/code-2-1.ts` (`make code-images`) + QR |
 | Βήματα κώδικα | `::: {.steps}` | αριθμημένη εξήγηση ①②③ |
 | Τι θα πάει στραβά | `::: {.trouble}` | κάρτες σύμπτωμα / «Γιατί:» / «Κάνε:» |
 | Πλαίσια | `{.tip}` `{.warn}` `{.safety}` `{.note}` | συμβουλή, προσοχή, ασφάλεια, σημείωση δασκάλου |

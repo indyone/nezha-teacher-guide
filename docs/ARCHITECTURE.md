@@ -21,6 +21,9 @@ Pandoc markdown με *fenced divs* (`::: {.timeline}` κ.ά.). Τα αρχεία
 - Έκδοση: το `VERSION`, αλλιώς το τελευταίο git tag (μπαίνει σε εξώφυλλο, υποσέλιδο και `<meta name="generator">`· το `make-pdf.sh` τη χρησιμοποιεί και στο όνομα του PDF).
 - Στο τέλος τυπώνει στατιστικά και «Μη μετασχηματισμένα components: N» (πρέπει 0· ελέγχεται από `make check`).
 
+## 3α. Εικόνες κώδικα
+Ο κώδικας κάθε μαθήματος ζει στο `tools/code/code-X-Y.ts`. Το `make code-images` (`tools/render-code.sh` → `tools/render-code.js`) τον στέλνει στον renderer του MakeCode (`---docs?render=1&lang=el`) μέσω Playwright και γράφει `assets/img/code-X-Y.png`: λευκό φόντο, μεγαλύτερη πλευρά 2000 px, χωρίς metadata. Δύο σχόλια στην αρχή του `.ts` το ρυθμίζουν: `// extensions:` (ποια πακέτα φορτώνονται, με έκδοση) και `// διάταξη: κάθετα` (το «κατά την έναρξη» πάνω από τα γεγονότα, για πολύ φαρδύ κώδικα). Κάθε αρχείο ζωγραφίζεται σε δικό του browser context, και τα αιτήματα προς το MakeCode ξαναδοκιμάζονται, γιατί όταν χαθεί κάποιο οι μεταφράσεις φορτώνουν μισές και τα μπλοκ βγαίνουν μισά στα Αγγλικά.
+
 ## 4. Paged.js → PDF
 Το `template.html` φορτώνει πρώτα το `assets/vendor/paged.polyfill.js` και, αν λείπει, μία αλυσίδα CDN (unpkg → jsDelivr → cdnjs). Το `PagedConfig.auto=false`
 ώστε η σελιδοποίηση να ξεκινά αφού φορτώσουν οι γραμματοσειρές. Οι γραμματοσειρές ορίζονται με `@font-face` σε τοπικά αρχεία `assets/vendor/fonts/` (αν λείπουν, το build αφαιρεί τα

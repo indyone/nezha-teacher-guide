@@ -11,6 +11,7 @@
 - [pandoc](https://pandoc.org): μετατρέπει τα αρχεία Markdown του κειμένου σε HTML
 - [Paged.js](https://pagedjs.org): σελιδοποιεί το HTML σε σελίδες Α4, με κεφαλίδες, υποσέλιδα και αριθμούς σελίδων
 - [Playwright](https://playwright.dev) (Chromium): τυπώνει τις σελιδοποιημένες σελίδες σε PDF
+- [MakeCode](https://makecode.microbit.org) (Microsoft): ζωγραφίζει τα μπλοκ κώδικα των μαθημάτων σε εικόνες
 - [Pillow](https://python-pillow.org): επεξεργάζεται τις φωτογραφίες (περικοπή, φωτισμός, ουδέτερο φόντο, αφαίρεση EXIF) και σχεδιάζει τις ετικέτες πάνω στη φωτογραφία της πλακέτας
 - [fontsource](https://fontsource.org): δίνει τις γραμματοσειρές Commissioner, Source Sans 3 και JetBrains Mono
 - [release-please](https://github.com/googleapis/release-please): βγάζει αυτόματα τις εκδόσεις και το «Ιστορικό εκδόσεων» από τα μηνύματα των αλλαγών

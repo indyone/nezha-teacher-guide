@@ -21,7 +21,7 @@ make pdf         # dist/odigos-daskalou-<έκδοση>.pdf (Playwright ή τοπ
 ```
 
 Αν δεν τρέξεις `make assets`, το HTML δουλεύει με CDN (Paged.js, Google Fonts) όταν υπάρχει internet.
-Άλλοι στόχοι: `make check` (έλεγχος πριν από commit), `make version`, `make changelog` (προεπισκόπηση της επόμενης έκδοσης), `make clean`.
+Άλλοι στόχοι: `make check` (έλεγχος πριν από commit), `make code-images` (εικόνες κώδικα από το `tools/code/` μέσω MakeCode· θέλει internet), `make version`, `make changelog` (προεπισκόπηση της επόμενης έκδοσης), `make clean`.
 
 ### Χειροκίνητο PDF από τον browser
 Άνοιξε το `dist/index.html` στο Chrome, περίμενε τη σελιδοποίηση, Cmd/Ctrl+P → «Αποθήκευση ως PDF» → A4 → Περιθώρια: Κανένα →

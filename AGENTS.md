@@ -7,7 +7,8 @@
 - `content/*.md` — **μοναδική πηγή αλήθειας** (γράφεται σε σύνταξη components, βλ. [design/COMPONENT_SPEC.md](design/COMPONENT_SPEC.md)). Ταξινομούνται κατά όνομα αρχείου.
 - `content/STYLE_BRIEF.md` — κανόνες ύφους και ορολογίας.
 - `design/` — `tokens.css`, `print.css`, `template.html`, `DESIGN_SYSTEM.md`, `COMPONENT_SPEC.md`.
-- `tools/` — `build.py` (markdown → `dist/index.html`· με `--sample` → `dist/sample.html`), `fetch-assets.sh`, `make-pdf.sh`, `process-photos.py`.
+- `tools/` — `build.py` (markdown → `dist/index.html`· με `--sample` → `dist/sample.html`), `fetch-assets.sh`, `make-pdf.sh`, `process-photos.py`, `render-code.sh`/`render-code.js` (εικόνες κώδικα).
+- `tools/code/` — ο κώδικας κάθε μαθήματος (`code-X-Y.ts`), από τον οποίο βγαίνουν οι εικόνες `img/code-X-Y.png`.
 - `assets/img/` — φωτογραφίες· στο markdown ως `img/<όνομα>.jpg`. `assets/vendor/` — γεμίζει με `make assets`.
 - `docs/` — πλάνο, έρευνα, αποφάσεις. Αρχιτεκτονική: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Οδηγός περιεχομένου: [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md).
 - `dist/` — παραγόμενο. **Ποτέ δεν το επεξεργάζεσαι.**
@@ -54,7 +55,7 @@ docs: ενημέρωση ανοιχτών σημείων
 
 ## Γνωστά ανοιχτά σημεία
 
-- Screenshots κώδικα (`img/code-X-Y.png`) δεν υπάρχουν ακόμη: εμφανίζονται ως placeholders.
-- Δύο συνδέσμους MakeCode (διορθωμένα projects 3.5 και 4.1) πρέπει να τους συμπληρώσει άνθρωπος· εμφανίζονται ως `[LINK: …]`.
+- Οι εικόνες κώδικα βγαίνουν από το `tools/code/*.ts` με `make code-images` (θέλει internet). Αν αλλάξει ο κώδικας ενός μαθήματος, άλλαξε το `.ts` και ξανατρέξε.
+- Τα 3.5, 4.1 και 4.2 δεν έχουν σύνδεσμο MakeCode (βλ. [decisions-and-open-items §9](docs/decisions-and-open-items.md)).
 - Φωτογραφίες μαθημάτων (κατασκευές) και φωτογραφία χάρτη πίστας (`img/track-map.jpg`) λείπουν.
 - Η πλήρης λίστα: [docs/decisions-and-open-items.md](docs/decisions-and-open-items.md) και [docs/review-report-v0.md](docs/review-report-v0.md).
