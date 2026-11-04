@@ -440,7 +440,7 @@
 
 ## Ο κώδικας
 
-::: {.code-figure id="fig-3-5" src="img/code-3-5.png" caption="Ο κώδικας του μαθήματος 3.5 – Ανιχνευτής εισβολέα"}
+::: {.code-figure id="fig-3-5" src="img/code-3-5.png" caption="Ο κώδικας του μαθήματος 3.5 – Ανιχνευτής εισβολέα" link="https://makecode.microbit.org/_DkHTViAoKDjt"}
 :::
 
 Ο κώδικας έχει **11 μπλοκ**. Δεν χρειάζεται μεταβλητή: η σύγκριση διαβάζει απευθείας τον αισθητήρα.
@@ -561,7 +561,7 @@
 
 ## Ο κώδικας
 
-::: {.code-figure id="fig-4-1" src="img/code-4-1.png" caption="Ο κώδικας του μαθήματος 4.1 – Αυτοκίνητο με ρυθμιστή ταχύτητας"}
+::: {.code-figure id="fig-4-1" src="img/code-4-1.png" caption="Ο κώδικας του μαθήματος 4.1 – Αυτοκίνητο με ρυθμιστή ταχύτητας" link="https://makecode.microbit.org/_AwLhxF7eT5cx"}
 :::
 
 Ο κώδικας έχει **12 μπλοκ**.
@@ -658,7 +658,7 @@
 
 ## Ο κώδικας
 
-::: {.code-figure id="fig-4-2" src="img/code-4-2.png" caption="Ο κώδικας του μαθήματος 4.2 – Αυτοκίνητο που αποφεύγει εμπόδια"}
+::: {.code-figure id="fig-4-2" src="img/code-4-2.png" caption="Ο κώδικας του μαθήματος 4.2 – Αυτοκίνητο που αποφεύγει εμπόδια" link="https://makecode.microbit.org/_FmXFRx0mjTyR"}
 :::
 
 Ο κώδικας έχει **18 μπλοκ**.

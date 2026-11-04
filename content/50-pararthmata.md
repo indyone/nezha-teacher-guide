@@ -447,9 +447,9 @@
 - [3.2 Ανεμιστήρας με ρυθμιστή (08)](https://makecode.microbit.org/_3LAMei8MzHij) — έτοιμο project του μαθήματος.
 - [3.3 Αυτόματη πόρτα (03)](https://makecode.microbit.org/_MssY8AXgCbkK) — έτοιμο project του μαθήματος.
 - [3.4 Συναγερμός (17)](https://makecode.microbit.org/_A4CaHvTuJ7br) — έτοιμο project του μαθήματος.
-- 3.5 Ανιχνευτής εισβολέα (09) — ο κώδικας δίνεται πλήρης στο μάθημα.
-- 4.1 Αυτοκίνητο με ρυθμιστή ταχύτητας (10) — ο κώδικας δίνεται πλήρης στο μάθημα.
-- 4.2 Αυτοκίνητο που αποφεύγει εμπόδια (12) — ο κώδικας δίνεται πλήρης στο μάθημα.
+- [3.5 Ανιχνευτής εισβολέα (09)](https://makecode.microbit.org/_DkHTViAoKDjt) — έτοιμο project του μαθήματος.
+- [4.1 Αυτοκίνητο με ρυθμιστή ταχύτητας (10)](https://makecode.microbit.org/_AwLhxF7eT5cx) — έτοιμο project του μαθήματος.
+- [4.2 Αυτοκίνητο που αποφεύγει εμπόδια (12)](https://makecode.microbit.org/_FmXFRx0mjTyR) — έτοιμο project του μαθήματος.
 - [4.3 Αυτοκίνητο ακολουθίας γραμμής (11)](https://makecode.microbit.org/_Uy0eywFah0u1) — έτοιμο project του μαθήματος.
 - [5.1 Ιδέα-σπόρος: ταλαντευόμενος ανεμιστήρας (21)](https://makecode.microbit.org/_fLtdmb8EmHxR) — έτοιμο project για το ελεύθερο project «Λύσε ένα πρόβλημα του σχολείου».
 - [5.1 Ιδέα-σπόρος: ρομπότ που περπατά (48)](https://makecode.microbit.org/_1ugd2o5xJDae) — έτοιμο project για το ελεύθερο project «Λύσε ένα πρόβλημα του σχολείου».
