@@ -155,6 +155,8 @@ img{max-width:100%}
 /* ---------- Κώδικας ---------- */
 .code-figure{margin:6mm 0;break-inside:avoid}
 .code-figure>img,.code-figure>.box,.code-figure>img.pic{display:block;width:100%;height:auto;max-height:100mm;object-fit:contain;border:.5pt solid var(--rule);border-radius:2mm}
+/* εικόνα κώδικα: 3mm λευκό γύρω από τα μπλοκ, ώστε να μην ακουμπούν το πλαίσιο */
+.code-figure>img{box-sizing:border-box;padding:3mm;background:#fff}
 .code-figure>.linkbox{margin:3mm 0 0}
 figcaption{font-size:9pt}
 .box{position:relative;width:100%;aspect-ratio:16/9;max-height:100mm;background:#F4F6F8;border:.75pt dashed #AEB8C2;border-radius:2.5mm;overflow:hidden}
