@@ -3,13 +3,16 @@ PY ?= python3
 VERSION := $(shell cat VERSION 2>/dev/null)
 GITVER  := $(shell git describe --tags --always 2>/dev/null || echo $(VERSION))
 
-.PHONY: assets html pdf all clean changelog version check help
+.PHONY: assets code-images html pdf all clean changelog version check help
 
 help:
-	@echo "Στόχοι: assets html pdf all clean changelog version check"
+	@echo "Στόχοι: assets code-images html pdf all clean changelog version check"
 
 assets:            ## κατεβάζει γραμματοσειρές + Paged.js στο assets/vendor/
 	bash tools/fetch-assets.sh
+
+code-images:       ## tools/code/*.ts -> assets/img/code-*.png μέσω MakeCode (θέλει internet)
+	bash tools/render-code.sh
 
 html:              ## content/*.md -> dist/index.html
 	$(PY) tools/build.py content dist
