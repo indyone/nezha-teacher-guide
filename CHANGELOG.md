@@ -2,7 +2,7 @@
 
 Τι άλλαξε στον οδηγό σε κάθε έκδοση. Οι αλλαγές στον κώδικα και στο build δεν γράφονται εδώ. Θα τις βρεις στο git history του repo.
 
-## Επόμενη έκδοση
+## 0.0.1 · 12 Νοεμβρίου 2026
 
 ### Νέα και αλλαγές
 - Τα πλαίσια (Σημείωση, Συμβουλή, Προσοχή, Σύνδεσμος) μπαίνουν μέσα στο κείμενο, σε όλο το πλάτος της σελίδας, αντί για το περιθώριο.
@@ -34,42 +34,6 @@
 
 ### Φωτογραφίες
 - Ομοιόμορφες φωτογραφίες εξαρτημάτων: ίδιος προσανατολισμός, τετράγωνο κάδρο, ουδέτερο φόντο.
-
-## [0.0.1](https://github.com/indyone/nezha-teacher-guide/compare/v0.0.0...v0.0.1) (2026-11-12)
-
-
-### Νέα και αλλαγές
-
-* **assets:** εικόνες των μπλοκ κώδικα σε 15 μαθήματα ([feb2389](https://github.com/indyone/nezha-teacher-guide/commit/feb23897c97e3d8cf67eafedf38c457948393cf6))
-* **build:** η «Άδεια χρήσης» γίνεται τελικό κεφάλαιο αντί για σελίδα 2 ([24ff864](https://github.com/indyone/nezha-teacher-guide/commit/24ff86440262cf261365a2b836bbc6adc667e753))
-* **build:** σελίδα ταυτότητας με άδεια χρήσης και πληροφορίες έκδοσης ([4a48316](https://github.com/indyone/nezha-teacher-guide/commit/4a4831620c114e3893f32b6486f8c0b92e8879f6))
-* **content:** placeholders φωτογραφιών για τα μαθήματα 2.1–2.5 και τα τουβλάκια ([632c43f](https://github.com/indyone/nezha-teacher-guide/commit/632c43f713afac0d2c632cf562aa3a6fc96b3b5c))
-* **content:** έτοιμο project MakeCode για τα μαθήματα 3.5, 4.1 και 4.2 ([c5cc94b](https://github.com/indyone/nezha-teacher-guide/commit/c5cc94b331ea9eabb06df128e9582ed5b4517228))
-* **content:** κάρτες ρόλων με τι κάνει και τι δεν κάνει κάθε ρόλος ([8a8efa8](https://github.com/indyone/nezha-teacher-guide/commit/8a8efa8a7e352232d9cbf3e7c125875af39e92f2))
-* **content:** φόρμες/αφίσα στο Παράρτημα Γ, συναίνεση φωτογραφιών ([4cb366a](https://github.com/indyone/nezha-teacher-guide/commit/4cb366a4963c31c92d799f459dc21ab667993734))
-* **design:** διάταξη πλήρους πλάτους και πλαίσια Σημείωση/Για γέλια/Σύνδεσμος ([ec6f416](https://github.com/indyone/nezha-teacher-guide/commit/ec6f4166d2070c9ed04dbf5e86ee4ad19b16bc15))
-* **design:** διάταξη πλήρους πλάτους, εκτυπώσιμα, φόρμες, αφίσα (merge feat/full-width-layout) ([f0fc662](https://github.com/indyone/nezha-teacher-guide/commit/f0fc662fb0bbb10349f805f0978e87a1fc89dd82))
-* **design:** εκτύπωση μπρος-πίσω, Μέρη και Επίπεδα σε δεξιά σελίδα ([419cb3b](https://github.com/indyone/nezha-teacher-guide/commit/419cb3baf193c5a03a0f135e2ecea7ead848d9d3))
-* **design:** εκτυπώσιμα χωρίς υποσέλιδο, σε δεξιά σελίδα με κενή πίσω όψη ([ffea608](https://github.com/indyone/nezha-teacher-guide/commit/ffea6081e55d5f3b232cf8469bbcb71d7569a7cb))
-* **design:** εκτυπώσιμα ως αυτόνομες σελίδες, κάρτες μισού Α4, φόρμες συμπλήρωσης, αφίσα ([d208c36](https://github.com/indyone/nezha-teacher-guide/commit/d208c36aa2d37535b24e271e4374cde35f837267))
-* **design:** η αφίσα ασφαλείας γεμίζει τη σελίδα ([65a6f7f](https://github.com/indyone/nezha-teacher-guide/commit/65a6f7fe0f8a737456ad0eee4cfdb0666c46a5cb))
-* **design:** κάρτες ρόλων με «Τι κάνεις / Τι δεν κάνεις», εικονίδιο τουβλάκι ([4452c43](https://github.com/indyone/nezha-teacher-guide/commit/4452c439dccc200692f12bc0eae667a952931736))
-* **design:** λευκό κείμενο στα πορτοκαλί pills του Επιπέδου 5 ([1b7b959](https://github.com/indyone/nezha-teacher-guide/commit/1b7b959a7aa8a7355dc72e216f06c3d2fe97cf91))
-* **design:** μεγαλύτερα QR χωρίς τυπωμένο URL ([2ab1d61](https://github.com/indyone/nezha-teacher-guide/commit/2ab1d61142bbd1cf629b213725ccdafe0aaf2edf))
-* **design:** πλαίσιο χιούμορ «Bug ή feature;» με εικονίδιο εκδοχής 1 ([f863361](https://github.com/indyone/nezha-teacher-guide/commit/f863361c836502f91524354953678a56c92d49ec))
-
-
-### Διορθώσεις
-
-* **build:** εύρος δυσκολίας (dd="3–4") στην κάρτα «με μια ματιά» ([6cc25c8](https://github.com/indyone/nezha-teacher-guide/commit/6cc25c832ede2f36a655f4aeca8dd6d1f8ab40d1))
-* **build:** οι γραμμές ΔΔ/ΔΜ/Προαπαιτούμενα στην κάρτα .glance ξεχωρίζουν σωστά ([0545df5](https://github.com/indyone/nezha-teacher-guide/commit/0545df5ac799b39721040856dc10d6a68e34a1fd))
-* **build:** οι ετικέτες της ροής μαθήματος δεν βγαίνουν έξω από τα pills ([5ef78e9](https://github.com/indyone/nezha-teacher-guide/commit/5ef78e9ab08c80c9d66fe55944881d90069a69f3))
-* **build:** τα checkbox λιστών και φορμών δουλεύουν με pandoc 3 ([3f863c5](https://github.com/indyone/nezha-teacher-guide/commit/3f863c5dc3e59afb86cfa1c497c166399ee607f0))
-* **content:** πέντε πλαϊνές σημειώσεις γίνονται Συμβουλή/Προσοχή ([4305c9c](https://github.com/indyone/nezha-teacher-guide/commit/4305c9c45cd9ac0084b7e2ed056c5c7a1606ab07))
-* **content:** χωρίς σύνδεσμο που δεν ανοίγει στο 4.2 και χωρίς «ο σύνδεσμος θα προστεθεί» ([9db7b55](https://github.com/indyone/nezha-teacher-guide/commit/9db7b55cf97d0c104171bac061bde870ea12a3e7))
-* **design:** αριθμοί σελίδας στα Περιεχόμενα, ψαλίδι στη γραμμή κοπής, περιστραμμένος συγκεντρωτικός πίνακας ([7e1db55](https://github.com/indyone/nezha-teacher-guide/commit/7e1db550fedf0c44f669c551f699a87811dd48c6))
-* **design:** μεγαλύτερα QR, πηγές σε δύο στήλες, αριστερή στοίχιση κειμένου ([eacbc6e](https://github.com/indyone/nezha-teacher-guide/commit/eacbc6e4cbdfde3493a665ec388da1ca721ebeb7))
-* **design:** σωστή κεφαλίδα στο Παράρτημα Ε και στα τελικά κεφάλαια ([43e007e](https://github.com/indyone/nezha-teacher-guide/commit/43e007e46c049f47fa6883f31beca19bbda8e8ac))
 
 ## 0.0.0 · 1 Νοεμβρίου 2026
 
