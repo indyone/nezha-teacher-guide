@@ -1,0 +1,75 @@
+name: pages
+
+# Δημοσιεύει στο GitHub Pages το HTML μιας έκδοσης (από προεπιλογή της τελευταίας)
+# μαζί με το PDF της, ως odigos-daskalou.pdf.
+# Τρέχει μόνο του μετά από κάθε release (από το release-please.yml) ή με το χέρι.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag έκδοσης (κενό = τελευταία έκδοση)"
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Επιλογή έκδοσης
+        id: tag
+        run: |
+          TAG="${{ inputs.tag }}"
+          if [ -z "$TAG" ]; then
+            TAG=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          fi
+          echo "Έκδοση: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
+      - run: make assets
+      - run: make html
+      - name: PDF της έκδοσης
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "odigos-daskalou-${TAG}.pdf" -O dist/odigos-daskalou.pdf
+          touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

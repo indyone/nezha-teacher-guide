@@ -53,3 +53,13 @@ jobs:
         run: |
           TAG="${{ needs.release-please.outputs.tag_name }}"
           gh release upload "$TAG" "dist/odigos-daskalou-${TAG}.pdf" "dist/odigos-daskalou-${TAG}.html" "dist/odigos-daskalou-${TAG}-html-bundle.zip" --clobber
+
+  pages:
+    needs: [release-please, build-and-attach]
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag_name }}

@@ -51,6 +51,9 @@ make pdf         # dist/odigos-daskalou-<έκδοση>.pdf (Playwright ή τοπ
   Πριν το 1.0.0 τα `feat` ανεβάζουν το δεύτερο ψηφίο μόνο όπου χρειάζεται και τα `fix` το τρίτο· ρυθμίζεται στο `release-please-config.json`.
 - Το [release-please](https://github.com/googleapis/release-please) ανοίγει αυτόματα Release PR με νέο `CHANGELOG.md` και νέο `VERSION`·
   με το merge δημιουργείται tag και GitHub Release με το PDF και το HTML.
+- Μετά από κάθε release, το `pages.yml` ανεβάζει την τελευταία έκδοση στο GitHub Pages:
+  <https://indyone.github.io/nezha-teacher-guide/> (HTML) και `…/odigos-daskalou.pdf` (PDF).
+  Με το χέρι: Actions → pages → Run workflow (κενό tag = τελευταία έκδοση).
 - Η έκδοση (εξώφυλλο, υποσέλιδο, όνομα PDF) είναι το αρχείο `VERSION`, αλλιώς το τελευταίο git tag.
 
 ### Conventional Commits
