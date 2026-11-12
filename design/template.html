@@ -32,11 +32,32 @@
       var mark = function (v) { document.documentElement.setAttribute("data-paged", v); };
       var go = function () {
         try {
-          Promise.resolve(window.PagedPolyfill.preview()).then(function () { mark("done"); },
+          Promise.resolve(window.PagedPolyfill.preview()).then(function () { showSpreads(); mark("done"); },
             function (e) { console.error("Paged.js:", e); mark("error"); });
         } catch (e) { console.error("Paged.js:", e); mark("error"); }
       };
       (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go, go);
+    }
+    // Προβολή στην οθόνη ως βιβλίο: διπλοσέλιδα (αριστερή + δεξιά σελίδα), σμίκρυνση ώστε να χωράνε,
+    // μία στήλη σε στενή οθόνη. Το CSS ζει στο <template id="screen-view"> γιατί το Paged.js πετάει
+    // τους κανόνες @media screen από τα <style> που επεξεργάζεται. Δεν αγγίζει την εκτύπωση/PDF.
+    function showSpreads() {
+      var tpl = document.getElementById("screen-view");
+      var pages = document.querySelector(".pagedjs_pages");
+      var page = document.querySelector(".pagedjs_page");
+      if (!tpl || !pages || !page) return;
+      document.head.appendChild(tpl.content.cloneNode(true));
+      var fit = function () {
+        var root = document.documentElement;
+        var one = window.innerWidth < 900;
+        root.classList.toggle("view-one", one);
+        pages.style.zoom = "";
+        var need = page.offsetWidth * (one ? 1 : 2);
+        var avail = root.clientWidth - (one ? 16 : 48);
+        pages.style.zoom = String(Math.min(1, avail / need));
+      };
+      fit();
+      window.addEventListener("resize", fit);
     }
     function load() {
       if (i >= sources.length) { console.error("Paged.js δεν φορτώθηκε από καμία πηγή"); return; }
@@ -52,6 +73,27 @@
     load();
   })();
 </script>
+<template id="screen-view">
+<style>
+@media screen {
+  html, body { background: #E9ECEF; }
+  .pagedjs_pages {
+    display: flex; flex-wrap: wrap; row-gap: 10mm;
+    width: calc(var(--pagedjs-width) * 2); margin: 10mm auto;
+  }
+  .pagedjs_page { margin: 0; flex: none; background: #fff; }
+  /* η πρώτη σελίδα (εξώφυλλο) είναι δεξιά, όπως στο τυπωμένο βιβλίο */
+  .pagedjs_first_page { margin-left: var(--pagedjs-width); }
+  /* σκιά γύρω από το διπλοσέλιδο και απαλή σκίαση στη ράχη */
+  .pagedjs_left_page  { box-shadow: -2px 2px 10px rgba(0,0,0,.16), inset -10px 0 12px -10px rgba(0,0,0,.18); }
+  .pagedjs_right_page { box-shadow:  2px 2px 10px rgba(0,0,0,.16), inset  10px 0 12px -10px rgba(0,0,0,.18); }
+  /* στενή οθόνη: μία σελίδα κάτω από την άλλη */
+  .view-one .pagedjs_pages { flex-direction: column; width: var(--pagedjs-width); row-gap: 6mm; margin: 6mm auto; }
+  .view-one .pagedjs_first_page { margin-left: 0; }
+  .view-one .pagedjs_page { box-shadow: 0 2px 10px rgba(0,0,0,.16); }
+}
+</style>
+</template>
 </head>
 <body>
 

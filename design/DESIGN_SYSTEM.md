@@ -2,7 +2,7 @@
 
 Αρχεία: `tokens.css` (tokens + βασικά components), `print.css` (σελιδοποίηση Paged.js + components του build.py), `template.html`.
 Δείγμα προς έγκριση: `python3 tools/build.py content dist --sample` → `dist/sample.html`.
-Εκτύπωση: A4 με Paged.js. Η κλάση `.page` και τα `.page-body`/`.running-*` του tokens.css είναι παλιό δείγμα και δεν χρησιμοποιούνται από το build.
+Εκτύπωση: A4 με Paged.js. Οθόνη (`dist/index.html`, GitHub Pages): γκρι φόντο, διπλοσέλιδα με το εξώφυλλο μόνο του δεξιά, σμίκρυνση ώστε να χωράνε, μία στήλη κάτω από 900 px. Το CSS αυτό είναι στο `<template id="screen-view">` του `template.html` και μπαίνει μετά τη σελιδοποίηση, γιατί το Paged.js πετάει τους κανόνες `@media screen` των `<style>`· δεν επηρεάζει το PDF. Η κλάση `.page` και τα `.page-body`/`.running-*` του tokens.css είναι παλιό δείγμα και δεν χρησιμοποιούνται από το build.
 
 ## Γεωμετρία
 - Μία στήλη πλήρους πλάτους. `@page`: πάνω 18, κάτω 18, αριστερά 18, δεξιά 16 mm → περιεχόμενο 176 mm. Δεν υπάρχει πλαϊνή στήλη (καταργήθηκε το `--side`)· τίποτα δεν είναι float ή με αρνητικό περιθώριο.
